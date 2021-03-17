@@ -8,6 +8,9 @@
 
 using namespace std;
 
+// R: Alias for pair<int, long long>
+typedef pair<int, long long> PIL;
+
 // R: added this template file to make things easier
 
 struct Point 
