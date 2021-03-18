@@ -55,19 +55,19 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
 	      string temp;
 	      input_line = input_line.substr(pos+1);
 	      //read and store the ID of the vertex
-	      pos=str.find(",");
-	      temp=str.substr(0,pos);
+	      pos=input_line.find(",");
+	      temp=input_line.substr(0,pos);
 	      int v=stoi(temp);
 	      // add the vertex to the graph
 	      graph.addVertex(v);
 
-	      str=str.substr(pos+1);
-	      pos=str.find(",");
-	      temp = str.substr(0,pos);
+	      input_line=input_line.substr(pos+1);
+	      pos=input_line.find(",");
+	      temp = input_line.substr(0,pos);
 	      double coord= stod(temp);
 	      pt.lat=static_cast<long long>(coord*100000);
 
-	      temp =str.substr(pos+1);
+	      temp =input_line.substr(pos+1);
 	      coord= stod(temp);
 	      pt.lon=static_cast<long long>(coord*100000);
 	      points[v]=pt;
