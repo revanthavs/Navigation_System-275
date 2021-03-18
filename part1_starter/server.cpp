@@ -35,22 +35,25 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
 	ifstream fin;
 	fin.open(filename);
 
+	// R: I changed the name of variable str to input_line to
+	//increase readability
 	while(!fin.eof())
   	{// a loop to read from the stdin until EOF is reached
 
 	    // declaring variables
 	    Point pt;
-	    string str,value;
+	    string input_line,value; char V = 'V', E = 'E', comma = ',';
 	    //reading a line from stdin using istream object cin
-	    getline(cin,str);
+	    getline(cin, input_line);
 	    //storing the choice, 'V' or 'E'
-	    int pos=str.find(",");
-	    value=str.substr(0,pos);
-	    str=str.substr(pos+1);
+	    int pos = input_line.find(",");
+	    // value = input_line.substr(0,pos);
+	    // input_line = input_line.substr(pos+1);
 
-	    if(value=="V")
+	    if(input_line[0] == V)
 	    {// if a vertex is given
 	      string temp;
+	      input_line = input_line.substr(pos+1);
 	      //read and store the ID of the vertex
 	      pos=str.find(",");
 	      temp=str.substr(0,pos);
@@ -69,12 +72,29 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
 	      pt.lon=static_cast<long long>(coord*100000);
 	      points[v]=pt;
 	    }
-	    if(choice=="E"){
-	    	
-	    }
-
-	}
-
+    	// R: Since the start of the input line would either be 'V' or 'E'
+    	else if (input_line[0] == E){
+      		int bounds = input_line.size()+1;
+      		int index = 2, substr_i = 0; char temp = input_line[index];
+      		string temp_string = "", sub_str[2];
+      		for (int i = index; i < bounds; i++) {
+        		temp = input_line[i];
+        		if (temp == comma){
+          			sub_str[substr_i] = temp_string;
+          			temp_string = "";
+          			substr_i++;
+          			continue;
+        		}
+        		else{
+          			temp_string += temp;
+        		}
+      		}
+      		int ver1 = stoi(sub_str[0]);
+      		int ver2 = stoi(sub_str[1]);
+      		graph.addEdge(ver1, ver2);
+    	}
+  	}
+  	return;
 }
 
 long long manhattan(const Point& pt1,const Point& pt2) 
