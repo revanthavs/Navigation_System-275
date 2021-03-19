@@ -19,6 +19,13 @@ struct Point
     long long lon; // Longitude of the point
 };
 
+long long manhattan(const Point& pt1,const Point& pt2) 
+{
+    // Computes and returns the Manhattan distance between the two given points
+    long long manDist= abs(pt1.lat-pt2.lat)+abs(pt1.lon-pt2.lon);
+    return manDist;
+}
+
 void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& points) 
 {
     /*
@@ -91,18 +98,16 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
       		}
       		int ver1 = stoi(sub_str[0]);
       		int ver2 = stoi(sub_str[1]);
-      		graph.addEdge(ver1, ver2);
+
+      		//calculating and adding the weight for this edge
+      		long long weight= manhattan(points[ver1],points[ver2]);
+      		graph.addEdge(ver1, ver2, weight);
     	}
   	}
   	return;
 }
 
-long long manhattan(const Point& pt1,const Point& pt2) 
-{
-    // Computes and returns the Manhattan distance between the two given points
-    long long manDist= abs(pt1.lat-pt2.lat)+abs(pt1.lon-pt2.lon);
-    return manDist;
-}
+
 
 void dijkstra(const WDigraph& graph,int startVertex, unordered_map<int, PIL>& tree) 
 {
