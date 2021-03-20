@@ -10,12 +10,8 @@ using namespace std;
 void dijkstra(const WDigraph& graph, int startVertex,
               unordered_map<int, PIL>& tree);
 
-// R: Need to recheck the variables with auto declaration
-// after implementing heap class
-typedef pair<int, long long> PIL;
-
 void dijkstra(const WDigraph& graph, int startVertex, 
-    unordered_map<int, PIL>& searchTree) {
+    unordered_map<int, PIL>& tree) {
 
   BinaryHeap events;
 
@@ -29,8 +25,8 @@ void dijkstra(const WDigraph& graph, int startVertex,
 
       events.popmin();
 
-      if (searchTree.find(v) == searchTree.end()) {
-          searchTree[v] = u;
+      if (tree.find(v) == tree.end()) {
+          tree[v] = u;
           for (auto iter = graph.neighbours(v); iter != graph.endIterator(v); iter++) {
               int nbr = *iter;
               events.insert(PIL(v, nbr), d+getCost(v, nbr));
