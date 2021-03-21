@@ -21,7 +21,7 @@ void dijkstra(const WDigraph& graph, int startVertex,
 
       auto current_item = events.min();
 
-      int v = current_item.first, u = current_item.second.first, d = current_item.second.second;
+      int v = current_item.first.first, u = current_item.first.second, d = current_item.second;
 
       events.popmin();
 
