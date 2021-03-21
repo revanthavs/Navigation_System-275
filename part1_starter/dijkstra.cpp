@@ -11,28 +11,76 @@ void dijkstra(const WDigraph& graph, int startVertex,
               unordered_map<int, PIL>& tree);
 
 void dijkstra(const WDigraph& graph, int startVertex, 
-    unordered_map<int, PIL>& tree) {
+    unordered_map<int, PIL>& searchTree) {
 
+  // R: New instance of BinaryHeap to keep track of events
   BinaryHeap events;
 
-  events.insert(PIL(startVertex, startVertex), 0);
+  // R: inserting the dummy element to get started
+  events.insert(PIPIL(startVertex, PIL(startVertex, 0)));
 
+  // Loop ends after finding the shortest path
     while (events.size() > 0) {
 
-      auto current_item = events.min();
+        // The current vertex neet to be process
+        auto current_item = events.min();
 
-      int v = current_item.first.first, u = current_item.first.second, d = current_item.second;
+        int v = current_item.first, u = current_item.second.first;
+        long long int d = current_item.second.second;
 
-      events.popmin();
+        // Since we are processing min vertex and need to update the heap
+        events.popmin();
 
-      if (tree.find(v) == tree.end()) {
-          tree[v] = u;
-          for (auto iter = graph.neighbours(v); iter != graph.endIterator(v); iter++) {
-              int nbr = *iter;
-              events.insert(PIL(v, nbr), d+getCost(v, nbr));
-          }
-      }
+        if (searchTree.find(v) == searchTree.end()) {
+            searchTree[v] = u;
+
+            // Exploring all the neigbors of the vertex
+            for (auto iter = graph.neighbours(v); iter != graph.endIterator(v); iter++) {
+                int nbr = *iter;
+                events.insert(PIPIL(v, PIL(nbr, d+getCost(v, nbr))));
+            }
+        }
     }
 
     return;
 }
+
+
+// #include <iostream>
+// #include <unordered_map>
+// #include "heap.h"
+// #include "dijkstra.h"
+
+// using namespace std;
+
+// // R: need to add Dijkstra's algorithm implementation
+
+// void dijkstra(const WDigraph& graph, int startVertex,
+//               unordered_map<int, PIL>& tree);
+
+// void dijkstra(const WDigraph& graph, int startVertex, 
+//     unordered_map<int, PIL>& tree) {
+
+//   BinaryHeap events;
+
+//   events.insert(PIL(startVertex, startVertex), 0);
+
+//     while (events.size() > 0) {
+
+//       auto current_item = events.min();
+
+//       int v = current_item.first.first, u = current_item.first.second, d = current_item.second;
+
+//       events.popmin();
+
+//       if (tree.find(v) == tree.end()) {
+//           tree[v] = u;
+//           for (auto iter = graph.neighbours(v); iter != graph.endIterator(v); iter++) {
+//               int nbr = *iter;
+//               events.insert(PIL(v, nbr), d+getCost(v, nbr));
+//           }
+//       }
+//     }
+
+//     return;
+// }

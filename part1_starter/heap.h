@@ -37,7 +37,7 @@ private:
   // that received i's item (if appropriate)
   void fixHeapDown(int i);
 
-  // Returns the parent index of the given index
+  // R: Returns the parent index of the given index (Helper method)
   unsigned int parent_index(unsigned int i);
 };
 
@@ -53,11 +53,11 @@ HeapItem<T, K> BinaryHeap::min() const{
 }
 
 void BinaryHeap::insert(const T& item, const K& key){
-  HeapItem<T, K> temp_v;
+  HeapItem<T, K> temp_v;  // Need to update this approach
   temp_v.item = item;
   temp_v.key = key;
   heap.push_back(temp_v);
-  //R: This code need to be implemented in fixheapup
+  // R: This code needs to be implemented in fixheapup
   unsigned int v_i = heap.size() - 1;
   unsigned int p_i = parent_index(v_i);
   while ((v_i != 0) && (heap[v_i].key < heap[p_i].key)){
@@ -73,6 +73,7 @@ int BinaryHeap::size() const{
 
 unsigned int BinaryHeap::parent_index(unsigned int i){
   if (i > 0){
+    // R: Since we are storing all the values in array
     return ((i-1)/2);
   }
   else
