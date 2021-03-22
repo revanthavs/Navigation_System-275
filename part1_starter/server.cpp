@@ -108,21 +108,6 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
 }
 
 
-
-void dijkstra(const WDigraph& graph,int startVertex, unordered_map<int, PIL>& tree) 
-{
-    /*Compute least cost paths that start from a given vertex.
-    Use a binary heap to efficiently retrieve an unexplored vertex that
-    has the minimum distance from the start vertex at every iteration.
-
-    PIL is an alias for "pair<int, long long>" type as discussed in class
-    PARAMETERS:
-    WDigraph: an instance of the weighted directed graph (WDigraph) class
-    startVertex: a vertex in this graph which serves as the root of the search tree
-    tree: a search tree used to construct the least cost path to some vertex
-
-    */
-}
 int main()
 {
 	WDigraph wgraph;

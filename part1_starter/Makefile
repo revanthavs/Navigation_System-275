@@ -9,5 +9,8 @@ digraph.o: digraph.cpp digraph.h
 server.o: server.cpp
 	g++ -c server.cpp -o server.o -std=c++11
 
+dijkstra.o: dijkstra.cpp dijkstra.h	heap.h
+	g++ -c dijkstra.cpp -o dijkstra.o -std=c++11
+
 clean:
 	rm -r -f digraph.o server.o testfile

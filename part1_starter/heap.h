@@ -44,23 +44,27 @@ private:
 /*
   R: Returns the pair (x, key) with the smallest key
 */
+
+template <class T, class K>
 HeapItem<T, K> BinaryHeap::min() const{
   if (heap.size() > 0){
     // R: Since the first element of the array holding the heap is the root index
     // R: Which holds the minimum key value
     return heap[0];
   }
+  return;
 }
 
+template <class T, class K>
 void BinaryHeap::insert(const T& item, const K& key){
   HeapItem<T, K> temp_v;  // Need to update this approach
   temp_v.item = item;
   temp_v.key = key;
   heap.push_back(temp_v);
-  // R: This code needs to be implemented in fixheapup
+  // R: Should be implemented in fixheapup
   unsigned int v_i = heap.size() - 1;
   unsigned int p_i = parent_index(v_i);
-  while ((v_i != 0) && (heap[v_i].key < heap[p_i].key)){
+  while ((v_i != 0) && (heap[v_i].key.second < heap[p_i].key.second)){
     swap(heap[v_i], heap[p_i]);
     v_i = p_i;
     p_i = parent_index(v_i);
