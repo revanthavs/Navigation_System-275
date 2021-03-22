@@ -43,7 +43,7 @@ void dijkstra(const WDigraph& graph, int startVertex,
             for (auto iter = graph.neighbours(v); iter != graph.endIterator(v); iter++) {
                 int nbr = *iter;
                 // events.insert(PIPIL(v, PIL(nbr, d+graph.getCost(v, nbr))));
-                eveents.insert(v, PIL(nbr, d+graph.getCost(v, nbr)));
+                events.insert(v, PIL(nbr, d+graph.getCost(v, nbr)));
             }
         }
     }
