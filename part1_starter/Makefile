@@ -13,4 +13,4 @@ dijkstra.o: dijkstra.cpp dijkstra.h	heap.h
 	g++ -c dijkstra.cpp -o dijkstra.o -std=c++11
 
 clean:
-	rm -r -f digraph.o server.o testfile
+	rm -r -f digraph.o server.o dijkstra.o testfile

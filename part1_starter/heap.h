@@ -44,9 +44,8 @@ private:
 /*
   R: Returns the pair (x, key) with the smallest key
 */
-
 template <class T, class K>
-HeapItem<T, K> BinaryHeap::min() const{
+HeapItem<T, K> BinaryHeap<T, K>::min() const{
   if (heap.size() > 0){
     // R: Since the first element of the array holding the heap is the root index
     // R: Which holds the minimum key value
@@ -56,7 +55,7 @@ HeapItem<T, K> BinaryHeap::min() const{
 }
 
 template <class T, class K>
-void BinaryHeap::insert(const T& item, const K& key){
+void BinaryHeap<T, K>::insert(const T& item, const K& key){
   HeapItem<T, K> temp_v;  // Need to update this approach
   temp_v.item = item;
   temp_v.key = key;
@@ -64,18 +63,20 @@ void BinaryHeap::insert(const T& item, const K& key){
   // R: Should be implemented in fixheapup
   unsigned int v_i = heap.size() - 1;
   unsigned int p_i = parent_index(v_i);
-  while ((v_i != 0) && (heap[v_i].key.second < heap[p_i].key.second)){
+  while ((v_i != 0) && (heap[v_i].key < heap[p_i].key)){
     swap(heap[v_i], heap[p_i]);
     v_i = p_i;
     p_i = parent_index(v_i);
   }
 }
 
-int BinaryHeap::size() const{
+template <class T, class K>
+int BinaryHeap<T, K>::size() const{
   return heap.size();
 }
 
-unsigned int BinaryHeap::parent_index(unsigned int i){
+template <class T, class K>
+unsigned int BinaryHeap<T, K>::parent_index(unsigned int i){
   if (i > 0){
     // R: Since we are storing all the values in array
     return ((i-1)/2);
