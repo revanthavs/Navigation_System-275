@@ -29,7 +29,7 @@ void dijkstra(const WDigraph& graph, int startVertex,
         // int v = current_item.item; int u = current_item.key.first;
         // long long d = current_item.key.second;
 
-        int v = current_item.item.first, u = current_item.item.second;
+        int u = current_item.item.first, v = current_item.item.second;
         long long d = current_item.key;
 
         // Since we are processing min vertex and need to update the heap
