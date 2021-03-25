@@ -51,7 +51,7 @@ HeapItem<T, K> BinaryHeap<T, K>::min() const{
     // R: Which holds the minimum key value
     return heap[0];
   }
-  return;
+  //return ;
 }
 
 template <class T, class K>
@@ -84,3 +84,36 @@ unsigned int BinaryHeap<T, K>::parent_index(unsigned int i){
   else
     return 0;
 }
+template <class T, class K>
+void BinaryHeap<T,K>::fixHeapDown(int i)
+{
+	int left=2*i+1;
+	int right=2*i+2;
+	int min_child=heap[left]<heap[right]? left : right;
+  while (heap[i].key > heap[min_child].key)
+  {
+    swap(heap[i], heap[min_child]);
+    i=min_child;
+    left=2*i+1;
+	right=2*i+2;
+
+	//J: has no children
+	if(left> size()-1)  break;
+
+	//J: has left child only
+	else if(left < (size()-1) && right > (size()-1))  min_child=left;
+
+	//J: has both children
+	else min_child=heap[left]<heap[right]? left : right;
+  }
+}
+
+template <class T, class K>
+void BinaryHeap<T,K>::popMin(){
+	
+	swap(heap[0],heap[size()-1]);
+	heap.pop_back();
+	fixHeapDown(0);
+}
+
+
