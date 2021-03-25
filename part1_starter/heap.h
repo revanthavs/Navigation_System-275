@@ -38,7 +38,7 @@ private:
   void fixHeapDown(int i);
 
   // R: Returns the parent index of the given index (Helper method)
-  unsigned int parent_index(unsigned int i);
+  // unsigned int parent_index(unsigned int i);
 };
 
 /*
@@ -55,6 +55,23 @@ HeapItem<T, K> BinaryHeap<T, K>::min() const{
 }
 
 template <class T, class K>
+void BinaryHeap<T, K>::fixHeapUp(int i){
+
+    int p_i = (i-1)/2;
+    // R: If the vertex is at root then no need to check for heap property
+    // R; If the new vertex validates the heap property if not swap
+    if ((i != 0) && (heap[i].key < heap[p_i].key)){
+        swap(heap[i], heap[p_i]);
+        i = p_i;
+        // R: Checkng if the swaped vertex obey's the heap property
+        fixHeapUp(i);
+    }
+    // R: Base case if it's satisfies the heap property or vertex is at root
+    else
+        return;
+}
+
+template <class T, class K>
 void BinaryHeap<T, K>::insert(const T& item, const K& key){
   HeapItem<T, K> temp_v;  // Need to update this approach
   temp_v.item = item;
@@ -62,12 +79,13 @@ void BinaryHeap<T, K>::insert(const T& item, const K& key){
   heap.push_back(temp_v);
   // R: Should be implemented in fixheapup
   unsigned int v_i = heap.size() - 1;
-  unsigned int p_i = parent_index(v_i);
-  while ((v_i != 0) && (heap[v_i].key < heap[p_i].key)){
-    swap(heap[v_i], heap[p_i]);
-    v_i = p_i;
-    p_i = parent_index(v_i);
-  }
+  fixHeapUp(v_i);
+  // unsigned int p_i = parent_index(v_i);
+  // while ((v_i != 0) && (heap[v_i].key < heap[p_i].key)){
+  //   swap(heap[v_i], heap[p_i]);
+  //   v_i = p_i;
+  //   p_i = parent_index(v_i);
+  // }
 }
 
 template <class T, class K>
@@ -75,36 +93,41 @@ int BinaryHeap<T, K>::size() const{
   return heap.size();
 }
 
-template <class T, class K>
-unsigned int BinaryHeap<T, K>::parent_index(unsigned int i){
-  if (i > 0){
-    // R: Since we are storing all the values in array
-    return ((i-1)/2);
-  }
-  else
-    return 0;
-}
+// template <class T, class K>
+// unsigned int BinaryHeap<T, K>::parent_index(unsigned int i){
+//   if (i > 0){
+//     // R: Since we are storing all the values in array
+//     return ((i-1)/2);
+//   }
+//   else
+//     return 0;
+// }
+
 template <class T, class K>
 void BinaryHeap<T,K>::fixHeapDown(int i)
 {
 	int left=2*i+1;
 	int right=2*i+2;
-	int min_child=heap[left]<heap[right]? left : right;
+	int min_child = heap[left].key < heap[right].key ? left : right;
   while (heap[i].key > heap[min_child].key)
   {
+
+  //J: has no children
+  if(left> size()-1)  break;
+
     swap(heap[i], heap[min_child]);
     i=min_child;
     left=2*i+1;
-	right=2*i+2;
+  	right=2*i+2;
 
-	//J: has no children
-	if(left> size()-1)  break;
+	// //J: has no children
+	// if(left> size()-1)  break;
 
 	//J: has left child only
-	else if(left < (size()-1) && right > (size()-1))  min_child=left;
+	if(left < (size()-1) && right > (size()-1))  min_child=left;
 
 	//J: has both children
-	else min_child=heap[left]<heap[right]? left : right;
+	else min_child= heap[left].key < heap[right].key ? left : right;
   }
 }
 
