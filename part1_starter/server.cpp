@@ -105,19 +105,9 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
       		graph.addEdge(ver1, ver2, weight);
     	}
   	}
+  	fin.close();
   	return;
 }
-
-
-// int main()
-// {
-// 	WDigraph wgraph;
-// 	string filename="edmonton-roads-2.0.1.txt";
-// 	//Point locations;
-// 	unordered_map<int, Point> points;
-// 	readGraph(filename, wgraph, points);
-// 	return 0;
-// }
 
 
 int main()
