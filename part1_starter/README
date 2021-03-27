@@ -1,0 +1,53 @@
+Name: 
+ID  : 
+
+Name: Jasmine Kaur Wadhwa
+ID  : 1619400
+
+CMPUT 275 WINTER 2021
+Assignment #1  Trivial Nagivation System
+
+
+
+Included Files:
+
+1) server.cpp
+2) heap.h
+3) dijkstra.cpp
+4) dijkstra.h
+5) digraph.h
+6) digraph.cpp
+7) wdigraph.h
+8) edmonton-roads-2.0.1.txt
+9) Makefile
+10) README
+
+Description:
+
+This application is a route-finding server which takes the coordinates of the start and end 
+points of a trip,computes the shortest path between them, and returns the route information, 
+which is coordinates of the waypoints along the shortest path.
+
+The Targets included in the Makefile are:
+	make server: links digraph.o server.o and dijkstra.o, and creates the executable
+	make digraph.o: compiles digraph.cpp and creates the object file
+	make server.o: compiles server.cpp and creates the object file
+	make dijkstra.o: compiles server.cpp and creates the object file
+	make clean: removes all the object files and the executable
+
+Running Instructions:
+1) The query to the server should be of the form:
+   R lat_1 lon_1 lat_2 lon_2  
+   Where lat_1 and lon_1 are the latitude and longitude respectively of the starting point, 
+   and lat_2 and lon_2 are the latitude and longitude respectively of the ending point. a
+2) The server responds to the query by first printing the number of waypoints along the 
+   path and then displaying the coordinates of each waypoint. 
+3) The client must acknowledge the receipt of data by responding with character 'A' after 
+   each print. The server indicates an end of session with the client by printing the letter 
+   'E'.
+
+Notes and Assumptions:
+1) The server computes the Manhattan Distance between the waypoints.
+2) The server responds with a "no path" message that is "N 0" when there does not exist any 
+   path between the start and end points of the trip.
+
