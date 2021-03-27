@@ -30,6 +30,12 @@ private:
   // the array holding the heap
   std::vector< HeapItem<T, K> > heap;
 
+  // will return the left child of the vertex
+  int left(int parent);
+
+  //will return the right child of the vertex
+  int right(int parent);
+
   //  will fix the heap property at index i and recurse with its parent
   void fixHeapUp(int i);
 
@@ -104,12 +110,48 @@ int BinaryHeap<T, K>::size() const{
 // }
 
 template <class T, class K>
+int BinaryHeap<T, K>::left(int parent){
+	int left=2*parent+1;
+
+	//J: if the left child has a valid index
+	if (left < size())
+		return left;
+	//J: if the index of left child is out of bounds
+	else
+		return -1;
+}
+template <class T, class K>
+int BinaryHeap<T, K>::right(int parent){
+	int right=2*parent+1;
+
+	//J: if the right child has a valid index
+	if (right < size())
+		return right;
+	//J: if the index of right child is out of bounds
+	else
+		return -1;
+}
+template <class T, class K>
 void BinaryHeap<T,K>::fixHeapDown(int i)
 {
-	int left=2*i+1;
-	int right=2*i+2;
-	int min_child = heap[left].key < heap[right].key ? left : right;
-  while (heap[i].key > heap[min_child].key)
+	int child1=left(i);
+	int child2=right(i);
+	
+	//J: if both the children are valid indices and the right child has the minimum value
+	if(child1 >= 0 && child2 >= 0 && heap[child1].key > heap[child2].key)
+	{
+		child1=child2;
+	}
+	//J: if the minimum child is a valid index and the does not obey the heap property,swap
+	if (child1 > 0 && heap[i].key > heap[child1].key)
+	{
+		swap(heap[i], heap[child1]);
+		//J: checking if the swapped vertex obeys the heap property
+		fixHeapDown(child1);
+	}
+}
+
+  /*while (heap[i].key > heap[min_child].key)
   {
 
   //J: has no children
@@ -129,10 +171,14 @@ void BinaryHeap<T,K>::fixHeapDown(int i)
 	//J: has both children
 	else min_child= heap[left].key < heap[right].key ? left : right;
   }
-}
+}*/
 
 template <class T, class K>
 void BinaryHeap<T,K>::popMin(){
+	if(size()==0)
+	{
+		return;
+	}
 	
 	swap(heap[0],heap[size()-1]);
 	heap.pop_back();
