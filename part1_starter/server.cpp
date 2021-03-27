@@ -146,6 +146,18 @@ int main()
 	}
 	int startVertex = 0, endVertex = 0;
 
+	for (auto it: points){
+		if (it.second.lat == start_point.lat && it.second.lon == start_point.lon){
+			startVertex = it.first;
+		}
+	}
+
+	for (auto it: points){
+		if (it.second.lat == end_point.lat && it.second.lon == end_point.lon){
+			endVertex = it.first;
+		}
+	}
+
 	unordered_map<int, PIL> searchTree;
 	dijkstra(wgraph, startVertex, searchTree);
 
