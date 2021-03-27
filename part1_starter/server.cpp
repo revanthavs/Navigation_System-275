@@ -5,6 +5,7 @@
 //#include "digraph.h"
 #include "dijkstra.h"
 #include <fstream>
+#include <list> // Need to update this
 
 using namespace std;
 
@@ -127,22 +128,18 @@ int main()
 	unordered_map<int, Point> points;
 	readGraph(filename, wgraph, points);
 
-	points start_point, end_point;
+	Point start_point, end_point;
 	string temp;
 	cin >> temp;
 	if (temp[0] == 'R'){
 		cin >> temp;
-		double coord = stod(temp);
-		start_point.lat = static_cast<long long>(coord * 100000);
+		start_point.lat = stol(temp);
 		cin >> temp;
-		coord = stod(temp);
-		start_point.lon = static_cast<long long>(coord * 100000);
+		start_point.lon = stol(temp);
 		cin >> temp;
-		coord = stod(temp);
-		end_point.lat = static_cast<long long>(coord * 100000);
+		end_point.lat = stol(temp);
 		cin >> temp;
-		coord = stod(temp);
-		end_point.lon = static_cast<long long>(coord * 100000);
+		end_point.lon = stol(temp);
 	}
 	int startVertex = 0, endVertex = 0;
 
@@ -178,7 +175,7 @@ int main()
 	for (auto it: path){
 		cin >> temp;
 		if (temp[0] == 'A'){
-			cout << "W " << points[path].lat << " " << points[path].lon;
+			cout << "W " << points[it].lat << " " << points[it].lon;
 		}
 	}
 

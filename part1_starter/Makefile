@@ -1,7 +1,7 @@
 # R: Temporary make file to test code
 
-all: digraph.o server.o
-	g++ digraph.o server.o -o testfile -std=c++11
+all: digraph.o server.o	dijkstra.o
+	g++ digraph.o server.o dijkstra.o -o testfile -std=c++11
 
 digraph.o: digraph.cpp digraph.h
 	g++ -c digraph.cpp -o digraph.o -std=c++11

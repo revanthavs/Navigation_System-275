@@ -7,11 +7,8 @@ using namespace std;
 
 // R: need to add Dijkstra's algorithm implementation
 
-void dijkstra(const WDigraph& graph, int startVertex,
-              unordered_map<int, PIL>& tree);
-
 void dijkstra(const WDigraph& graph, int startVertex, 
-    unordered_map<int, PIL>& searchTree) {
+    unordered_map<int, PIL>& tree) {
 
   // R: New instance of BinaryHeap to keep track of events
   BinaryHeap<PII, long long int> events;
@@ -33,10 +30,10 @@ void dijkstra(const WDigraph& graph, int startVertex,
         long long d = current_item.key;
 
         // Since we are processing min vertex and need to update the heap
-        events.popmin();
+        events.popMin();
 
-        if (searchTree.find(v) == searchTree.end()) {
-            searchTree[v] = PIL(u, d);
+        if (tree.find(v) == tree.end()) {
+            tree[v] = PIL(u, d);
 
             // Exploring all the neigbors of the vertex
             for (auto iter = graph.neighbours(v); iter != graph.endIterator(v); iter++) {
