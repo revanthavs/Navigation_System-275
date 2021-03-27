@@ -108,6 +108,17 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
 }
 
 
+// int main()
+// {
+// 	WDigraph wgraph;
+// 	string filename="edmonton-roads-2.0.1.txt";
+// 	//Point locations;
+// 	unordered_map<int, Point> points;
+// 	readGraph(filename, wgraph, points);
+// 	return 0;
+// }
+
+
 int main()
 {
 	WDigraph wgraph;
@@ -115,5 +126,50 @@ int main()
 	//Point locations;
 	unordered_map<int, Point> points;
 	readGraph(filename, wgraph, points);
+
+	points start_point, end_point;
+	string temp;
+	cin >> temp;
+	if (temp[0] == 'R'){
+		cin >> temp;
+		double coord = stod(temp);
+		start_point.lat = static_cast<long long>(coord * 100000);
+		cin >> temp;
+		coord = stod(temp);
+		start_point.lon = static_cast<long long>(coord * 100000);
+		cin >> temp;
+		coord = stod(temp);
+		end_point.lat = static_cast<long long>(coord * 100000);
+		cin >> temp;
+		coord = stod(temp);
+		end_point.lon = static_cast<long long>(coord * 100000);
+	}
+	int startVertex = 0, endVertex = 0;
+
+	unordered_map<int, PIL> searchTree;
+	dijkstra(wgraph, startVertex, searchTree);
+
+	list<int> path;
+	if (searchTree.find(endVertex) == searchTree.end()){
+		cout << "N " << 0 << endl;
+	}
+	else {
+		int stepping = endVertex;
+		while (stepping != startVertex) {
+			path.push_front(stepping);
+
+			stepping = searchTree[stepping].first;
+		}
+		path.push_front(startVertex);
+	}
+	cout << "N " << path.size();
+	for (auto it: path){
+		cin >> temp;
+		if (temp[0] == 'A'){
+			cout << "W " << points[path].lat << " " << points[path].lon;
+		}
+	}
+
+	cout << "E" << endl;
 	return 0;
 }
