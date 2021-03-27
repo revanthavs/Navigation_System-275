@@ -52,7 +52,7 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
 	    Point pt;
 	    string input_line,value; char V = 'V', E = 'E', comma = ',';
 	    //reading a line from stdin using istream object cin
-	    getline(cin, input_line);
+	    getline(fin, input_line);
 	    //storing the choice, 'V' or 'E'
 	    int pos = input_line.find(",");
 	    // value = input_line.substr(0,pos);
@@ -134,13 +134,13 @@ int main()
 	int startVertex = 0, endVertex = 0;
 
 	for (auto it: points){
-		if (it.second.lat == start_point.lat && it.second.lon == start_point.lon){
+		if (it.second.lat == start_point.lat){
 			startVertex = it.first;
 		}
 	}
 
 	for (auto it: points){
-		if (it.second.lat == end_point.lat && it.second.lon == end_point.lon){
+		if (it.second.lat == end_point.lat){
 			endVertex = it.first;
 		}
 	}
