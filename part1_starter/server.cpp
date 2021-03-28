@@ -134,37 +134,34 @@ int main()
 	if (temp == "R"){
 		cin >> temp;
 		start_point.lat = stol(temp);
-		cout << start_point.lat << endl;
 		cin >> temp;
 		start_point.lon = stol(temp);
-		cout << start_point.lon << endl;
 		cin >> temp;
 		end_point.lat = stol(temp);
-		cout << end_point.lat << endl;
 		cin >> temp;
 		end_point.lon = stol(temp);
-		cout << end_point.lon << endl;
 	}
-	int startVertex = 277483195, endVertex = 561041122;
-	// int startVertex = 0, endVertex = 0;
+	// int startVertex = 277483195, endVertex = 561041122;
 
-	// for (auto it: points){
-	// 	// cout << it.first << endl;
-	// 	// cout << it.second.lat << " and " << it.second.lon << endl;
-	// 	if ((it.second.lat == start_point.lat)){
-	// 		startVertex = it.first;
-	// 		cout << it.second.lat << " and " << it.second.lon << endl;
-	// 	}
-	// }
-	// cout << startVertex << endl;
+	int startVertex = 0, endVertex = 0;
+	int distance = 1000000000;
 
-	// for (auto it: points){
-	// 	if ((it.second.lat == end_point.lat)){
-	// 		endVertex = it.first;
-	// 		cout << it.second.lat << " and " << it.second.lon << endl;
-	// 	}
-	// }
-	// cout << endVertex << endl;
+	for (auto it: points){
+		long long temp = manhattan(it.second, start_point);
+		if (temp <= distance){
+			distance = temp;
+			startVertex = it.first;
+		}
+	}
+
+	distance = 1000000000;
+	for (auto it: points){
+		long long temp = manhattan(it.second, end_point);
+		if (temp <= distance){
+			distance = temp;
+			endVertex = it.first;
+		}
+	}
 
 	unordered_map<int, PIL> searchTree;
 	dijkstra(wgraph, startVertex, searchTree);
@@ -181,11 +178,11 @@ int main()
 		}
 		path.push_front(startVertex);
 	}
-	cout << "N " << path.size();
+	cout << "N " << path.size() << endl;
 	for (auto it: path){
 		cin >> temp;
 		if (temp[0] == 'A'){
-			cout << "W " << points[it].lat << " " << points[it].lon;
+			cout << "W " << points[it].lat << " " << points[it].lon << endl;
 		}
 	}
 
