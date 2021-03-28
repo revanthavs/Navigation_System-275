@@ -1,5 +1,5 @@
-Name: 
-ID  : 
+Name: Venkata Sai Revanth Atmakuri
+ID  : 1684293
 
 Name: Jasmine Kaur Wadhwa
 ID  : 1619400
@@ -9,7 +9,7 @@ Assignment #1  Trivial Nagivation System
 
 
 
-Included Files:
+INCLUDED FILES:-
 
 1) server.cpp
 2) heap.h
@@ -22,20 +22,22 @@ Included Files:
 9) Makefile
 10) README
 
-Description:
+
+DESCRIPTION:-
 
 This application is a route-finding server which takes the coordinates of the start and end 
 points of a trip,computes the shortest path between them, and returns the route information, 
 which is coordinates of the waypoints along the shortest path.
 
-The Targets included in the Makefile are:
+
+MAKEFILE TARGETS:-
 	make server: links digraph.o server.o and dijkstra.o, and creates the executable
 	make digraph.o: compiles digraph.cpp and creates the object file
 	make server.o: compiles server.cpp and creates the object file
 	make dijkstra.o: compiles server.cpp and creates the object file
 	make clean: removes all the object files and the executable
 
-Running Instructions:
+RUNNING INSTRUCTIONS:-
 1) The query to the server should be of the form:
    R lat_1 lon_1 lat_2 lon_2  
    Where lat_1 and lon_1 are the latitude and longitude respectively of the starting point, 
@@ -46,7 +48,7 @@ Running Instructions:
    each print. The server indicates an end of session with the client by printing the letter 
    'E'.
 
-Notes and Assumptions:
+NOTES AND ASSUMPTIONS:-
 1) The server computes the Manhattan Distance between the waypoints.
 2) The server responds with a "no path" message that is "N 0" when there does not exist any 
    path between the start and end points of the trip.
