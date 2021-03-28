@@ -12,74 +12,93 @@ using namespace std;
 
 struct Point 
 {
+/*
+	This struct stores the latitude and longitude of each Vertex in the graph
+*/
     long long lat; // Latitude of the point
     long long lon; // Longitude of the point
 };
 
 long long manhattan(const Point& pt1,const Point& pt2) 
 {
+/*	
+	This function takes in the coordinates of two vertices in the graph, computes 
+	and returns the Manhattan distance between them.
+*/
     // Computes and returns the Manhattan distance between the two given points
     long long manDist= abs(pt1.lat-pt2.lat)+abs(pt1.lon-pt2.lon);
     return manDist;
 }
 
+
+void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& points) 
+{
 /*
-    Read the Edmonton map data from the provided
-    fileand load it into the given WDigraph object.
-    Store vertex coordinates in Point struct and map
-    each vertex to its corresponding Point struct.
+    This function reads the Edmonton map data from the provided
+    file and loads it into the given WDigraph object.
+    It uses the Point struct to Store vertex coordinates and maps
+    the ID of each vertex to its corresponding Point struct.
 
     PARAMETERS:
     filename: name of the file describing a road network
     graph: an instance of the weighted directed graph (WDigraph)class
-    points: a mapping between vertex identifiers and their coordinates
+    points: a mapping between vertex identifiers and their coordinates 
+    		stored in Point struct  
 */
-void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& points) 
-{
+
+	// instantiating an object of input file stream class to read from the provided 
+	// file
 	ifstream fin;
+
+	//opening the file
 	fin.open(filename);
 
-	// R: I changed the name of variable str to input_line to
-	//increase readability
+	
 	while(!fin.eof())
-  	{// a loop to read from the stdin until EOF is reached
+  	{// a loop to read from the given file until EOF is reached
 
 	    // declaring variables
 	    Point pt;
 	    string input_line,value; char V = 'V', E = 'E', comma = ',';
-	    //reading a line from stdin using istream object cin
+	    //reading a line from the file using ifstream object fin
 	    getline(fin, input_line);
-	    // cout << input_line << endl;
-	    //storing the choice, 'V' or 'E'
+	    
 	    int pos = input_line.find(",");
-	    // value = input_line.substr(0,pos);
-	    // input_line = input_line.substr(pos+1);
-
+	    
 	    if(input_line[0] == V)
 	    {// if a vertex is given
+
 	      string temp;
 	      input_line = input_line.substr(pos+1);
-	      //read and store the ID of the vertex
+	      //reading and storing the ID of the vertex
 	      pos=input_line.find(",");
 	      temp=input_line.substr(0,pos);
 	      int v=stoi(temp);
+
 	      // add the vertex to the graph
 	      graph.addVertex(v);
-	      // cout << "Added vertex: "<< v << endl;
 
+	      // reading the coordinates of the vertex 
 	      input_line=input_line.substr(pos+1);
 	      pos=input_line.find(",");
 	      temp = input_line.substr(0,pos);
 	      double coord= stod(temp);
+	      // storing the latitude of the vertex in 100,000-ths of degrees 
 	      pt.lat=static_cast<long long>(coord*100000);
 
+	      // reading and storing the longitude of the vertex in 100,000-ths 
+	      // of degrees
 	      temp =input_line.substr(pos+1);
 	      coord= stod(temp);
 	      pt.lon=static_cast<long long>(coord*100000);
+
+	      // maping the vertex to its coordinates
 	      points[v]=pt;
 	    }
-    	// R: Since the start of the input line would either be 'V' or 'E'
+    	// Since the start of the input line would either be 'V' or 'E'
     	else if (input_line[0] == E){
+    		// If an edge is given 
+
       		int bounds = input_line.size()+1;
       		int index = 2, substr_i = 0; char temp = input_line[index];
       		string temp_string = "", sub_str[2];
@@ -98,20 +117,29 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
       		int ver1 = stoi(sub_str[0]);
       		int ver2 = stoi(sub_str[1]);
 
-      		//calculating and adding the weight for this edge
+      		// calculating and adding the weight for this edge, i.e
+      		// the manhattan distance between the points
       		long long weight= manhattan(points[ver1],points[ver2]);
       		graph.addEdge(ver1, ver2, weight);
     	}
   	}
-
+  	// closig the file
   	fin.close();
   	return;
 }
 
 int main()
-{
+{/* 
+	This is the main function of the program. It calls readGraph() to read from the
+	file "edmonton-roads-2.0.1.txt" and then responds to the client requests by 
+	displaying the waypoints along the shortest path between the coordinates provided 
+	by the client.
+*/
+
+	// instantiating an object of WDigraph class
 	WDigraph wgraph;
 	string filename="edmonton-roads-2.0.1.txt";
+	
 	//Point locations;
 	unordered_map<int, Point> points;
 	readGraph(filename, wgraph, points);
