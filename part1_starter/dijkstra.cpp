@@ -1,20 +1,18 @@
 #include <iostream>
+// To store the search tree and since the find takes constant time
 #include <unordered_map>
-#include "heap.h"
+#include "heap.h" 
 #include "dijkstra.h"
 
 using namespace std;
 
-// R: need to add Dijkstra's algorithm implementation
-
 void dijkstra(const WDigraph& graph, int startVertex, 
     unordered_map<int, PIL>& tree) {
 
-  // R: New instance of BinaryHeap to keep track of events
+  // New instance of BinaryHeap to keep track of events
   BinaryHeap<PII, long long int> events;
 
-  // R: inserting the dummy element to get started
-  // events.insert(startVertex, PIL(startVertex, 0));
+  // inserting the start vertexto in the heap to get started
   events.insert(PII(startVertex, startVertex), 0);
 
   // Loop ends after finding the shortest path
@@ -23,22 +21,25 @@ void dijkstra(const WDigraph& graph, int startVertex,
         // The current vertex neet to be process
         auto current_item = events.min();
 
-        // int v = current_item.item; int u = current_item.key.first;
-        // long long d = current_item.key.second;
-
+        // v the current vertex to be explored
+        // u is the predessor of the vertex v
+        // d is the total cost/time that took to reach the current vertex
         int u = current_item.item.first, v = current_item.item.second;
         long long d = current_item.key;
 
         // Since we are processing min vertex and need to update the heap
         events.popMin();
 
+        // Checking if we alreay explored the vertex before
         if (tree.find(v) == tree.end()) {
             tree[v] = PIL(u, d);
 
-            // Exploring all the neigbors of the vertex
-            for (auto iter = graph.neighbours(v); iter != graph.endIterator(v); iter++) {
+            // Exploring all the neigbors of the current vertex
+            for (auto iter = graph.neighbours(v);
+             iter != graph.endIterator(v); iter++) {
                 int nbr = *iter;
-                // events.insert(v, PIL(nbr, d+graph.getCost(v, nbr)));
+                
+                // inserting the neighbour vertex with ther cost/time to reach them
                 events.insert(PII(v, nbr), d+graph.getCost(v, nbr));
             }
         }
