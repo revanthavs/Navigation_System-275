@@ -4,6 +4,7 @@ using namespace std;
 // Only assumes the key type K is totally ordered and comparable via <
 template <class T, class K>
 struct HeapItem {
+	//a structure to store an item and its key.
   T item;
   K key;
 };
@@ -46,6 +47,10 @@ private:
 */
 template <class T, class K>
 HeapItem<T, K> BinaryHeap<T, K>::min() const{
+/* This method returns the minimum element of the heap. This function takes no 
+   arguments and returns a HeapItem<T,K>
+*/
+
   // To make sure that heap is not empty
   if (heap.size() > 0){
     // Since the first element of the array holding the heap is the root index
@@ -56,6 +61,9 @@ HeapItem<T, K> BinaryHeap<T, K>::min() const{
 
 template <class T, class K>
 void BinaryHeap<T, K>::fixHeapUp(int i){
+/*	This method takes in the index i and continues to swap it with its parent 
+	vertices (fixes it up) until it satisfies the heap property.  
+*/
 
     // To get the parent index in the vector
     int p_i = (i-1)/2;
@@ -77,6 +85,9 @@ void BinaryHeap<T, K>::fixHeapUp(int i){
 
 template <class T, class K>
 void BinaryHeap<T, K>::insert(const T& item, const K& key){
+/*This method inserts an element at the end of the heaap and then 
+  fixes the heap up such that all the elements in the heap satisfy 
+  the heap property.*/
 
   HeapItem<T, K> temp_v;
   temp_v.item = item;
@@ -92,13 +103,18 @@ void BinaryHeap<T, K>::insert(const T& item, const K& key){
 
 template <class T, class K>
 int BinaryHeap<T, K>::size() const{
-  // Since the size of Binaryheap is the number of vertexs in heap
+	/*This method returns a the number of elements in the heap */
+
+	  // Since the size of Binaryheap is the number of vertexs in heap
   return heap.size();
 }
 
 
 template <class T, class K>
 void BinaryHeap<T, K>::fixHeapDown(int i){
+	/*This method continues to swap the parent index i with with the 
+	  minimmum of both its children (right and left) until the heap
+	  property is satisfied.*/ 
 
   int left = 2*i + 1;
   int right = 2*i + 2;
@@ -127,6 +143,8 @@ void BinaryHeap<T, K>::fixHeapDown(int i){
 
 template <class T, class K>
 void BinaryHeap<T,K>::popMin(){
+	/*This method pops the minimum element off the heap and then fixes 
+	  the heap property wherever in the heap it is not satisfied. */
   
   // If there are no elements to pop in the heap
   if(size()==0)

@@ -8,6 +8,10 @@ using namespace std;
 
 void dijkstra(const WDigraph& graph, int startVertex, 
     unordered_map<int, PIL>& tree) {
+/* It takes in a reference to the instance of graph class, a reference 
+   of the searchTree and a startVertex. The function then finds the all 
+   the vertices that can be reached from the startVertex in the order 
+   that they are reached, and updates the searchTree.  */
 
   // New instance of BinaryHeap to keep track of events
   BinaryHeap<PII, long long int> events;
