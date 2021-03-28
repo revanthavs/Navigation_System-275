@@ -1,3 +1,16 @@
+/*
+Name: 
+ID  : 
+
+Name: Jasmine Kaur Wadhwa
+ID  : 1619400
+
+CMPUT 275 WINTER 2021
+Assignment #1  Trivial Nagivation System
+*/
+
+
+
 #include <iostream>
 #include <cstdlib> // To type cast the double value to long long
 #include "wdigraph.h"
@@ -23,6 +36,15 @@ long long manhattan(const Point& pt1,const Point& pt2)
 /*	
 	This function takes in the coordinates of two vertices in the graph, computes 
 	and returns the Manhattan distance between them.
+
+	Parameters: 
+
+	pt1(a const reference to the struct Point): contains coordinates of Vertex1
+	pt2(a const reference to the struct Point): contains coordinates of Vertex2 
+
+	Return:
+	manDist (long long): stores the value of the manhattan distance between the two vertices
+						 provided
 */
 
 

@@ -1,3 +1,15 @@
+/*
+Name: 
+ID  : 
+
+Name: Jasmine Kaur Wadhwa
+ID  : 1619400
+
+CMPUT 275 WINTER 2021
+Assignment #1  Trivial Nagivation System
+*/
+
+
 #include <vector>
 using namespace std;
 
