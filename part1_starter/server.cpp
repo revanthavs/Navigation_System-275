@@ -108,18 +108,6 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
   	return;
 }
 
-
-// int main()
-// {
-// 	WDigraph wgraph;
-// 	string filename="edmonton-roads-2.0.1.txt";
-// 	//Point locations;
-// 	unordered_map<int, Point> points;
-// 	readGraph(filename, wgraph, points);
-// 	return 0;
-// }
-
-
 int main()
 {
 	WDigraph wgraph;
@@ -141,7 +129,6 @@ int main()
 		cin >> temp;
 		end_point.lon = stol(temp);
 	}
-	// int startVertex = 277483195, endVertex = 561041122;
 
 	int startVertex = 0, endVertex = 0;
 	int distance = 1000000000;
