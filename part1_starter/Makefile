@@ -1,22 +1,15 @@
+##########################################
+#  Name: 
+#  ID  : 
+#
+#  Name: Jasmine Kaur Wadhwa
+#  ID  : 1619400
+#
+#  CMPUT 275 WINTER 2021
+#  Assignment #1  Trivial Nagivation System
+#
+##########################################
 
-# # R: Temporary make file to test code
-
-# all: server
-
-# server: digraph.o server.o dijkstra.o
-# 	g++ digraph.o server.o dijkstra.o -o server -std=c++11
-
-# digraph.o: digraph.cpp digraph.h
-# 	g++ -c digraph.cpp -o digraph.o -std=c++11
-
-# server.o: server.cpp
-# 	g++ -c server.cpp -o server.o -std=c++11
-
-# dijkstra.o: dijkstra.cpp dijkstra.h	heap.h
-# 	g++ -c dijkstra.cpp -o dijkstra.o -std=c++11
-
-# clean:
-# 	rm -r -f digraph.o server.o dijkstra.o testfile server
 
 CC=g++
 CFLAGS=-c -Wall -O2 -std=c++11
