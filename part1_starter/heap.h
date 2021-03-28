@@ -49,6 +49,10 @@ template <class T, class K>
 HeapItem<T, K> BinaryHeap<T, K>::min() const{
 /* This method returns the minimum element of the heap. This function takes no 
    arguments and returns a HeapItem<T,K>
+
+   Return:
+   heap[0] (HeapItem<T, K>) : the first element of the heap which is also the 
+   							  smallest element of the heap
 */
 
   // To make sure that heap is not empty
@@ -62,7 +66,11 @@ HeapItem<T, K> BinaryHeap<T, K>::min() const{
 template <class T, class K>
 void BinaryHeap<T, K>::fixHeapUp(int i){
 /*	This method takes in the index i and continues to swap it with its parent 
-	vertices (fixes it up) until it satisfies the heap property.  
+	vertices (fixes it up) until it satisfies the heap property.
+
+	Parameters:
+	i(int): the vertex which doesn't satisfy the heap property
+
 */
 
     // To get the parent index in the vector
@@ -87,7 +95,13 @@ template <class T, class K>
 void BinaryHeap<T, K>::insert(const T& item, const K& key){
 /*This method inserts an element at the end of the heaap and then 
   fixes the heap up such that all the elements in the heap satisfy 
-  the heap property.*/
+  the heap property.
+	
+  Parameters: 
+  item :a const reference to the item of struct HeapItem<T,K>
+  key : a const reference to the key of struct HeapItem<T,K>
+
+  */
 
   HeapItem<T, K> temp_v;
   temp_v.item = item;
@@ -103,7 +117,11 @@ void BinaryHeap<T, K>::insert(const T& item, const K& key){
 
 template <class T, class K>
 int BinaryHeap<T, K>::size() const{
-	/*This method returns a the number of elements in the heap */
+	/*This method returns a the number of elements in the heap 
+
+	  Return:
+	  heap.size() : the size of the heap which is an integer value 
+	*/
 
 	  // Since the size of Binaryheap is the number of vertexs in heap
   return heap.size();
@@ -112,9 +130,13 @@ int BinaryHeap<T, K>::size() const{
 
 template <class T, class K>
 void BinaryHeap<T, K>::fixHeapDown(int i){
-	/*This method continues to swap the parent index i with with the 
-	  minimmum of both its children (right and left) until the heap
-	  property is satisfied.*/ 
+/*This method continues to swap the parent index i with with the 
+  minimmum of both its children (right and left) until the heap
+  property is satisfied.
+
+  Parameters:
+  i(int): the vertex which doesn't satisfy the heap property
+*/ 
 
   int left = 2*i + 1;
   int right = 2*i + 2;
@@ -144,7 +166,14 @@ void BinaryHeap<T, K>::fixHeapDown(int i){
 template <class T, class K>
 void BinaryHeap<T,K>::popMin(){
 	/*This method pops the minimum element off the heap and then fixes 
-	  the heap property wherever in the heap it is not satisfied. */
+	  the heap property wherever in the heap it is not satisfied. 
+	  
+	  Parameters:
+	  None
+
+	  Return:
+	  None
+	*/
   
   // If there are no elements to pop in the heap
   if(size()==0)

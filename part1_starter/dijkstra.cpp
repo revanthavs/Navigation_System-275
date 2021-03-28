@@ -11,7 +11,15 @@ void dijkstra(const WDigraph& graph, int startVertex,
 /* It takes in a reference to the instance of graph class, a reference 
    of the searchTree and a startVertex. The function then finds the all 
    the vertices that can be reached from the startVertex in the order 
-   that they are reached, and updates the searchTree.  */
+   that they are reached, and updates the searchTree.  
+   
+   Parameters:
+   graph: a const reference to the instance of the weighted graph class,
+          the graph we need to explore
+   startVertex: an integer value that stores the starting vertex 
+   tree: a reference to the unordered map of int and PIL, to store the 
+         vertices that can be reached from startVertex
+*/
 
   // New instance of BinaryHeap to keep track of events
   BinaryHeap<PII, long long int> events;
