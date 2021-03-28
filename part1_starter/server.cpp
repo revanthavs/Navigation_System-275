@@ -1,12 +1,10 @@
 #include <iostream>
-#include <cstdlib>
-#include "heap.h"
+#include <cstdlib> // To type cast the double value to long long
 #include "wdigraph.h"
-//#include "digraph.h"
+#include "digraph.h"
 #include "dijkstra.h"
-#include <fstream>
-#include <list> // Need to remove this
-#include <vector> // Need to remove this
+#include <fstream> // To open the input file
+#include <list> // To store the path between Start and End Vertexs
 
 using namespace std;
 
@@ -24,52 +22,56 @@ long long manhattan(const Point& pt1,const Point& pt2)
 }
 
 /*
-    Read the Edmonton map data from the provided
-    fileand load it into the given WDigraph object.
+    Reads the Edmonton map data from the provided
+    file and load it into the given WDigraph object.
     Store vertex coordinates in Point struct and map
     each vertex to its corresponding Point struct.
 
     PARAMETERS:
-    filename: name of the file describing a road network
-    graph: an instance of the weighted directed graph (WDigraph)class
-    points: a mapping between vertex identifiers and their coordinates
+    	filename: name of the file describing a road network
+    	graph: an instance of the weighted directed graph (WDigraph)class
+    	points: a mapping between vertex identifiers and their coordinates
 */
 void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& points) 
 {
+	// To open the file
 	ifstream fin;
 	fin.open(filename);
 
-	// R: I changed the name of variable str to input_line to
-	//increase readability
+	// Reads the data from the file until EOF reached
 	while(!fin.eof())
-  	{// a loop to read from the stdin until EOF is reached
+  	{
 
-	    // declaring variables
 	    Point pt;
 	    string input_line,value; char V = 'V', E = 'E', comma = ',';
-	    //reading a line from stdin using istream object cin
-	    getline(fin, input_line);
-	    // cout << input_line << endl;
-	    //storing the choice, 'V' or 'E'
-	    int pos = input_line.find(",");
-	    // value = input_line.substr(0,pos);
-	    // input_line = input_line.substr(pos+1);
 
+	    //reading a line from stdin using ifstream object fin
+	    getline(fin, input_line);
+
+	    // To find the index of comma in the input string
+	    int pos = input_line.find(",");
+
+	    // If the line represents to add new Vertex
 	    if(input_line[0] == V)
-	    {// if a vertex is given
+	    {
+
 	      string temp;
 	      input_line = input_line.substr(pos+1);
-	      //read and store the ID of the vertex
+
+	      // Reads and store the ID of the vertex
 	      pos=input_line.find(",");
 	      temp=input_line.substr(0,pos);
 	      int v=stoi(temp);
-	      // add the vertex to the graph
-	      graph.addVertex(v);
-	      // cout << "Added vertex: "<< v << endl;
 
+	      // adds the vertex to given graph
+	      graph.addVertex(v);
+
+	      // Reads and store the lattiture of the vertex
 	      input_line=input_line.substr(pos+1);
 	      pos=input_line.find(",");
 	      temp = input_line.substr(0,pos);
+	      // Since double data type does not have enough significant digits
+	      // Converting it to a long long uisng static cast
 	      double coord= stod(temp);
 	      pt.lat=static_cast<long long>(coord*100000);
 
@@ -78,11 +80,13 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
 	      pt.lon=static_cast<long long>(coord*100000);
 	      points[v]=pt;
 	    }
-    	// R: Since the start of the input line would either be 'V' or 'E'
+    	// The given line repersents to add two vertexs in graph
     	else if (input_line[0] == E){
+    		// Since the first character would be either 'V' OR 'E'
       		int bounds = input_line.size()+1;
       		int index = 2, substr_i = 0; char temp = input_line[index];
       		string temp_string = "", sub_str[2];
+      		// To store the given vertex IDs
       		for (int i = index; i < bounds; i++) {
         		temp = input_line[i];
         		if (temp == comma){
@@ -95,15 +99,17 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
           			temp_string += temp;
         		}
       		}
+
       		int ver1 = stoi(sub_str[0]);
       		int ver2 = stoi(sub_str[1]);
 
-      		//calculating and adding the weight for this edge
+      		// To represent the cost between the two vertexs
       		long long weight= manhattan(points[ver1],points[ver2]);
       		graph.addEdge(ver1, ver2, weight);
     	}
   	}
-
+  	
+  	// Since we are done reading the file closing it
   	fin.close();
   	return;
 }
@@ -156,6 +162,7 @@ int main()
 	list<int> path;
 	if (searchTree.find(endVertex) == searchTree.end()){
 		cout << "N " << 0 << endl;
+		return 0;
 	}
 	else {
 		int stepping = endVertex;
