@@ -198,6 +198,13 @@ int main(int argc, char* argv[]) {
 
   struct timeval timer = {.tv_sec = 1, .tv_usec = 10000};
 
+  if (setsockopt(conn_socket_desc, SOL_SOCKET, SO_RCVTIMEO, (void *) &timer, sizeof(timer)) == -1) {
+    std::cerr << "Cannot set socket options!\n";
+    close(conn_socket_desc);
+    return 1;
+  }
+
+
   while(true) {
     int rec_size = recv(conn_socket_desc, buffer, BUFFER_SIZE, 0);
     if (rec_size == -1){
@@ -219,7 +226,8 @@ int main(int argc, char* argv[]) {
     }
     char R = 'R';
     if (buffer[0] == R){
-      string p[5];
+      // Need to check this way
+      char *p[5];
       int at = 0;
       for (auto c : line) {
         if (c == ' ') {
@@ -258,7 +266,7 @@ int main(int argc, char* argv[]) {
           std::string str = "N ";
           str += std::to_string(path.size());
           send(conn_socket_desc, str.c_str(), str.length() + 1, 0);
-          int rec_size = recv(conn_socket_desc, buffer, BUFFER_SIZE, 0);
+          rec_size = recv(conn_socket_desc, buffer, BUFFER_SIZE, 0);
           if (rec_size == -1){
             std::cout << "Timeout occurred.. still waiting!\n";
             continue;
@@ -275,7 +283,7 @@ int main(int argc, char* argv[]) {
             str += std::to_string(points[v].lon);
             // str += "\n"; need to check if I need to send newline character
             send(conn_socket_desc, Way_point.c_str(), Way_point.length() + 1, 0);
-            int rec_size = recv(conn_socket_desc, buffer, BUFFER_SIZE, 0);
+            rec_size = recv(conn_socket_desc, buffer, BUFFER_SIZE, 0);
             if (rec_size == -1) {
               std::cout << "Timeout occurred.. still waiting!\n";
               // Need to find a way to get to ther outer loop
