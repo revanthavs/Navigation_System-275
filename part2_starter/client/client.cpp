@@ -46,6 +46,15 @@ int main(int argc, char const *argv[]) {
     const char *inpipe = "inpipe";
     const char *outpipe = "outpipe";
 
+    if (argc == 3){
+        SERVER_PORT = atoi(argv[1]);
+        server_IP=argv[2];
+    }
+    else{
+        cout << "Enter port number and server IP address: \n";
+        return 0;
+    }
+
     int in = create_and_open_fifo(inpipe, O_RDONLY);
     cout << "inpipe opened..." << endl;
     int out = create_and_open_fifo(outpipe, O_WRONLY);
@@ -53,13 +62,7 @@ int main(int argc, char const *argv[]) {
 
     // Your code starts here
 
-    if (argc == 3){
-    SERVER_PORT = atoi(argv[1]);
-    server_IP=argv[2];
-    }
-    else{
-    cout << "Enter port number and server IP address: \n";
-    }
+
 
     // 1. Establish a connection with the server
     struct sockaddr_in my_addr, peer_addr;
