@@ -58,7 +58,7 @@ int main(int argc, char const *argv[]) {
     server_IP=argv[2];
     }
     else{
-    std::cout << "Enter port number and server IP address: \n";
+    cout << "Enter port number and server IP address: \n";
     }
 
     // 1. Establish a connection with the server
@@ -75,7 +75,7 @@ int main(int argc, char const *argv[]) {
 
     socket_desc = socket(AF_INET, SOCK_STREAM, 0);
     if (socket_desc == -1) {
-        std::cerr << "Listening socket creation failed!\n";
+        cerr << "Listening socket creation failed!\n";
         return 1;
     }
 
@@ -106,7 +106,7 @@ int main(int argc, char const *argv[]) {
         //2. Read coordinates of start and end points from inpipe (blocks until they are selected)
         char line[MSG_SIZE] = {};
         char msg_rec[MSG_SIZE]={};
-        char Out_buff[MSG_SIZE]={};
+        //char Out_buff[MSG_SIZE]={};
         int bytes_written;
         int bytes_read;
         string Ack = "A";
@@ -123,22 +123,19 @@ int main(int argc, char const *argv[]) {
             break;
         }
 
-        string coord[2];
+        char * coord[2];
         int num = 0;
         for (auto ch : line) {
             if (ch == ' ') {
               ++num;
-            }
-            else if(ch == '\0'){
-                break;
             }
             else {
               coord[num] += ch;
             }
         }
 
-        route_req+=" "+to_string(stod(coord[0])*100000);
-        route_req+=" "+to_string(stod(coord[1])*100000);
+        route_req+=" "+to_string(atof(coord[0])*100000);
+        route_req+=" "+to_string(atof(coord[1])*100000);
 
         num=0;
 
@@ -152,16 +149,13 @@ int main(int argc, char const *argv[]) {
             if (ch == ' ') {
                 ++num;
             }
-            else if(ch == '\0'){
-                continue;
-            }
             else {
               coord[num] += ch;
             }
         }
 
-        route_req+=" "+to_string(stod(coord[0])*100000);
-        route_req+=" "+to_string(stod(coord[1])*100000);
+        route_req+=" "+to_string(atof(coord[0])*100000);
+        route_req+=" "+to_string(atof(coord[1])*100000);
 
         // 3. Write to the socket
         send(socket_desc, route_req.c_str(), route_req.length() + 1, 0);
@@ -228,6 +222,8 @@ int main(int argc, char const *argv[]) {
             string Waypoint="";
             Waypoint+=to_string( stod(msg[1]) / 100000 ) + " " + to_string( stod(msg[2]) / 100000);
 
+            char Out_buff[Waypoint.length()+1]={};
+
             int j;
             for(j = 0; j < Waypoint.length(); j++)
             {
@@ -261,9 +257,10 @@ int main(int argc, char const *argv[]) {
             continue;
           }
         else{
-            Out_buff[0]=msg_rec[0];
-            Out_buff[1]='\n';
-            bytes_written = write(out, Out_buff , sizeof Out_buff);
+            char out_msg[2]={};
+            out_msg[0]=msg_rec[0];
+            out_msg[1]='\n';
+            bytes_written = write(out, out_msg , sizeof out_msg);
 
         }
     }
