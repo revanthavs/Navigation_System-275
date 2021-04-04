@@ -92,7 +92,14 @@ int main(int argc, char const *argv[]) {
         return 1;
     }
 
-    
+    struct timeval timer = {.tv_sec = 1};
+
+    if (setsockopt(socket_desc, SOL_SOCKET, SO_RCVTIMEO, (void *) &timer, sizeof(timer)) == -1) {
+        std::cerr << "Cannot set socket options!\n";
+        close(socket_desc);
+        return 1;
+      }
+
 
     while(true){
         bool flag= false;
@@ -160,12 +167,14 @@ int main(int argc, char const *argv[]) {
         send(socket_desc, route_req.c_str(), route_req.length() + 1, 0);
 
         int rec_size = recv(socket_desc, msg_rec, MSG_SIZE, 0);
+        if (rec_size == -1) {
+            cout << "Timeout occurred... state reset!\n";
+            continue;
+        }
 
         num=0;
         string msg[2];
         if(msg_rec[0] == 'N'){
-
-          
             send(socket_desc, Ack.c_str() , Ack.length()+1, 0);
             for(auto ch : msg_rec){ 
                 if(ch == ' '){
@@ -190,6 +199,11 @@ int main(int argc, char const *argv[]) {
         {
             string msg[3];
             rec_size = recv(socket_desc, msg_rec, MSG_SIZE, 0);
+            if (rec_size == -1) {
+                cout << "Timeout occurred... state reset!\n";
+                flag=true;
+                break;
+            }
 
             num=0;
             if(msg_rec[0] == 'W'){
@@ -233,6 +247,12 @@ int main(int argc, char const *argv[]) {
         }
             
         rec_size = recv(socket_desc, msg_rec, MSG_SIZE, 0);
+        if (rec_size == -1) {
+            cout << "Timeout occurred... state reset!\n";
+            
+            continue;
+        }
+
 
         char E= 'E' ;
 
@@ -249,15 +269,6 @@ int main(int argc, char const *argv[]) {
     }
 
 
-        
-        
-
-        
-
-    
-
-
-
     // Here is what you need to do:
     // 1. Establish a connection with the server
     // 2. Read coordinates of start and end points from inpipe (blocks until they are selected)
@@ -267,9 +278,6 @@ int main(int argc, char const *argv[]) {
     // 5. Write these coordinates to outpipe
     // 6. Go to Step 2
     // 7. Close the socket and pipes
-
-
-
 
 
     // Your code ends here
