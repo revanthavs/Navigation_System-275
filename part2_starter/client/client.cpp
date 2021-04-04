@@ -95,6 +95,7 @@ int main(int argc, char const *argv[]) {
     
 
     while(true){
+        bool flag= false;
         //2. Read coordinates of start and end points from inpipe (blocks until they are selected)
         char line[MSG_SIZE] = {};
         char msg_rec[MSG_SIZE]={};
@@ -102,7 +103,7 @@ int main(int argc, char const *argv[]) {
         int bytes_written;
         int bytes_read;
         string Ack = "A";
-        bool flag= false;
+        
 
         string route_req="";
 
@@ -180,7 +181,6 @@ int main(int argc, char const *argv[]) {
         }
         else{
             cout << "Received unexpected message!\n";
-            flag=true;
             continue; 
         }
         
@@ -207,8 +207,8 @@ int main(int argc, char const *argv[]) {
             }
             else{
                 cout << "Received unexpected message!\n";
-
-                continue; 
+                flag=true;
+                break; 
             }
 
             string Waypoint="";
@@ -226,6 +226,10 @@ int main(int argc, char const *argv[]) {
 
             
             send(socket_desc, Ack.c_str() , Ack.length()+1, 0);
+        }
+
+        if(flag){
+            continue;
         }
             
         rec_size = recv(socket_desc, msg_rec, MSG_SIZE, 0);
