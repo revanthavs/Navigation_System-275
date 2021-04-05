@@ -108,123 +108,132 @@ int main(int argc, char const *argv[]) {
         return 1;
       }
 
+    char line[MSG_SIZE] = {};
+    bool timeout=false;
+    string route_req="";
 
     while(true){
         bool flag= false;
         //2. Read coordinates of start and end points from inpipe (blocks until they are selected)
-        char line[MSG_SIZE] = {};
+        //char line[MSG_SIZE] = {};
         char msg_rec[MSG_SIZE]={};
         //char Out_buff[MSG_SIZE]={};
         int bytes_written;
         int bytes_read;
         string Ack = "A";
+
+        int num;
         
 
-        string route_req="";
+        if(!timeout)
+        {
+            route_req="";
+            route_req+="R";
 
-        route_req+="R";
+            bytes_read = read(in, line, MSG_SIZE);
 
-        bytes_read = read(in, line, MSG_SIZE);
-
-        for (auto _: line){
-            cout << _;
-        }
-        cout << endl;
-
-        if (strcmp("Q", line) == 0) {
-            send(socket_desc, line, strlen(line) + 1, 0);
-            break;
-        }
-
-        // char * coord[2];
-        string coord[2] = {};
-        int num = 0;
-        for (auto ch : line) {
-            if (ch == ' ') {
-            // cout << "Check " << coord[num] << endl;
-              ++num;
+            for (auto _: line){
+                cout << _;
             }
-            else {
-              coord[num] += ch;
+            cout << endl;
+
+            if (strcmp("Q", line) == 0) {
+                send(socket_desc, line, strlen(line) + 1, 0);
+                break;
             }
-        }
 
-        cout << "Checkpoint1\n";
-
-        char coord1[coord[0].length()];
-        for (int i = 0; i < coord[0].length(); i++){
-            coord1[i] = coord[0][i];
-        }
-
-        char coord2[coord[1].length()];
-        for (int i = 0; i < coord[1].length(); i++){
-            coord2[i] = coord[1][i];
-        }
-
-        // route_req+=" "+to_string(atof(coord[0])*100000);
-        // route_req+=" "+to_string(atof(coord[1])*100000);
-
-        long long temp1 = static_cast<long long>(atof(coord1)*100000);
-        long long temp2 = static_cast<long long>(atof(coord2)*100000);
-
-
-        route_req+=" "+to_string(temp1);
-        route_req+=" "+to_string(temp2);
-
-
-        cout << "Checkpoint3 " << route_req << endl;
-
-        num=0;
-
-        string s_coord[2];
-
-        bytes_read = read(in, line, MSG_SIZE);
-
-        for (auto _: line){
-            cout << _;
-        }
-        cout << endl;
-
-
-        if (strcmp("Q", line) == 0) {
-            send(socket_desc, line, strlen(line) + 1, 0);
-            break;
-        }
-        for (auto ch : line) {
-            if (ch == ' ') {
-                ++num;
+            // char * coord[2];
+            string coord[2] = {};
+            num = 0;
+            for (auto ch : line) {
+                if (ch == ' ') {
+                // cout << "Check " << coord[num] << endl;
+                  ++num;
+                }
+                else {
+                  coord[num] += ch;
+                }
             }
-            else {
-              s_coord[num] += ch;
+
+            cout << "Checkpoint1\n";
+
+            char coord1[coord[0].length()];
+            for (int i = 0; i < coord[0].length(); i++){
+                coord1[i] = coord[0][i];
             }
+
+            char coord2[coord[1].length()];
+            for (int i = 0; i < coord[1].length(); i++){
+                coord2[i] = coord[1][i];
+            }
+
+            // route_req+=" "+to_string(atof(coord[0])*100000);
+            // route_req+=" "+to_string(atof(coord[1])*100000);
+
+            long long temp1 = static_cast<long long>(atof(coord1)*100000);
+            long long temp2 = static_cast<long long>(atof(coord2)*100000);
+
+
+            route_req+=" "+to_string(temp1);
+            route_req+=" "+to_string(temp2);
+
+
+            cout << "Checkpoint3 " << route_req << endl;
+
+            num=0;
+
+            string s_coord[2];
+
+            bytes_read = read(in, line, MSG_SIZE);
+
+            for (auto _: line){
+                cout << _;
+            }
+            cout << endl;
+
+
+            if (strcmp("Q", line) == 0) {
+                send(socket_desc, line, strlen(line) + 1, 0);
+                break;
+            }
+            for (auto ch : line) {
+                if (ch == ' ') {
+                    ++num;
+                }
+                else {
+                  s_coord[num] += ch;
+                }
+            }
+
+            cout << "Checkpoint2\n";
+
+            char coord3[s_coord[0].length()];
+            for (int i = 0; i < s_coord[0].length(); i++){
+                coord3[i] = s_coord[0][i];
+            }
+
+            char coord4[s_coord[1].length()];
+            for (int i = 0; i < coord[1].length(); i++){
+                coord4[i] = s_coord[1][i];
+            }
+
+
+            long long temp3 = static_cast<long long>(atof(coord3)*100000);
+            long long temp4 = static_cast<long long>(atof(coord4)*100000);
+
+            route_req+=" "+to_string(temp3);
+            route_req+=" "+to_string(temp4);
+            cout << route_req << endl;
+
+
         }
-
-        cout << "Checkpoint2\n";
-
-        char coord3[s_coord[0].length()];
-        for (int i = 0; i < s_coord[0].length(); i++){
-            coord3[i] = s_coord[0][i];
-        }
-
-        char coord4[s_coord[1].length()];
-        for (int i = 0; i < coord[1].length(); i++){
-            coord4[i] = s_coord[1][i];
-        }
-
-
-        long long temp3 = static_cast<long long>(atof(coord3)*100000);
-        long long temp4 = static_cast<long long>(atof(coord4)*100000);
-
-        route_req+=" "+to_string(temp3);
-        route_req+=" "+to_string(temp4);
-        cout << route_req << endl;
-
+        
 
         // route_req+=" "+to_string(atof(coord[0])*100000);
         // route_req+=" "+to_string(atof(coord[1])*100000);
 
         cout << "Received coordinates\n";
-        cout << route_req << endl;
+       // cout << route_req << endl;
 
         // 3. Write to the socket
         send(socket_desc, route_req.c_str(), route_req.length() + 1, 0);
@@ -234,6 +243,7 @@ int main(int argc, char const *argv[]) {
         int rec_size = recv(socket_desc, msg_rec, MSG_SIZE, 0);
         if (rec_size == -1) {
             cout << "Timeout occurred... state reset!\n";
+            timeout=true;
             continue;
         }
 
@@ -265,6 +275,7 @@ int main(int argc, char const *argv[]) {
             rec_size = recv(socket_desc, msg_rec, MSG_SIZE, 0);
             if (rec_size == -1) {
                 cout << "Timeout occurred... state reset!\n";
+                timeout=true;
                 flag=true;
                 break;
             }
@@ -317,7 +328,7 @@ int main(int argc, char const *argv[]) {
         rec_size = recv(socket_desc, msg_rec, MSG_SIZE, 0);
         if (rec_size == -1) {
             cout << "Timeout occurred... state reset!\n";
-            
+            timeout=true;
             continue;
         }
 
