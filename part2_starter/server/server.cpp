@@ -156,14 +156,18 @@ int main(int argc, char* argv[]) {
   while(true) {
 
     char buffer[BUFFER_SIZE] = {};
+
     // Receiving the route information from client
     int rec_size = recv(conn_socket_desc, buffer, BUFFER_SIZE, 0);
+
+    // std::cout << "Size of Buffer: " << sizeof(buffer) << "\n";
 
     Point sPoint, ePoint;
     unordered_map<int, PIL> tree;
     int start, end;
     sPoint.lat = 0; sPoint.lon = 0; ePoint.lat = 0; ePoint.lat = 0;
     
+
     if (strcmp("Q", buffer) == 0) {
       std::cout << "Connection will be closed\n";
       // Need to check since we need to close connection
@@ -173,9 +177,12 @@ int main(int argc, char* argv[]) {
       return 0;
       // break;
     }
+
+    // If it's a route request
     char R = 'R';
     if (buffer[0] == R){
-      // Need to check this way
+
+      // To store the coordinate
       std::string coords[5];
       int at = 0;
       for (auto c : buffer) {
@@ -229,6 +236,7 @@ int main(int argc, char* argv[]) {
             path.push_front(end);
             end = tree[end].first;
           }
+
           path.push_front(start);
 
           // Sending the number of waypoints
@@ -240,6 +248,16 @@ int main(int argc, char* argv[]) {
             std::cout << "Timeout occurred.. still waiting!1\n";
             continue;
           }
+          // if (strcmp("Q", buffer) == 0) {
+          if (buffer[0] == 'Q'){
+            std::cout << "Connection will be closed\n";
+            // Need to check since we need to close connection
+            // I am thinking to closing the file destrctor would make more sense
+            // and then returning from the program
+            close(lstn_socket_desc);
+            return 0;
+            // break;
+          }
           char A = 'A';
           if (buffer[0] != A){
             std::cout << "Received unexpected message!1\n";
@@ -247,6 +265,7 @@ int main(int argc, char* argv[]) {
           }
           // Sending the waypoints
           for (auto v : path) {
+
             std::string Way_point = "W ";
             Way_point += std::to_string(points[v].lat);
             Way_point += " ";
@@ -254,17 +273,32 @@ int main(int argc, char* argv[]) {
 
             send(conn_socket_desc, Way_point.c_str(), Way_point.length() + 1, 0);
             rec_size = recv(conn_socket_desc, buffer, BUFFER_SIZE, 0);
+
             if (rec_size == -1) {
+
               std::cout << "Timeout occurred.. still waiting!2\n";
               goto Recv_new_request;
+
             }
-            else{
-              if (buffer[0] != A){
-                std::cout << "Received unexpected message!2\n";
-                goto Recv_new_request;
-              }
+
+            // if (strcmp("Q", buffer) == 0) {
+            if (buffer[0] == 'Q'){
+              std::cout << "Connection will be closed\n";
+              // Need to check since we need to close connection
+              // I am thinking to closing the file destrctor would make more sense
+              // and then returning from the program
+              close(lstn_socket_desc);
+              return 0;
+              // break;
             }
+
+            if (buffer[0] != A){
+              std::cout << "Received unexpected message!2\n";
+              goto Recv_new_request;
+            }
+
           }
+
           str = "E";
           send(conn_socket_desc, str.c_str(), str.length() + 1, 0);
           continue; // Need to conform

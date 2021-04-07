@@ -140,7 +140,10 @@ int main(int argc, char const *argv[]) {
             cout << endl;
 
             if (strcmp("Q", line) == 0) {
+                cout << "Quit checkpoint\n";
                 send(socket_desc, line, strlen(line) + 1, 0);
+                // send(socket_desc, "Q", strlen("Q") + 1, 0);
+                cout << "Send Q message to server\n";
                 break;
             }
 
@@ -196,6 +199,9 @@ int main(int argc, char const *argv[]) {
 
             if (strcmp("Q", line) == 0) {
                 send(socket_desc, line, strlen(line) + 1, 0);
+                cout << "Quit checkpoint\n";
+                // send(socket_desc, "Q", strlen("Q") + 1, 0);
+                cout << "Sended Q message to server\n";
                 break;
             }
             for (auto ch : line) {
