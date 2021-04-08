@@ -41,6 +41,7 @@ int create_and_open_fifo(const char * pname, int mode) {
 }
 
 int main(int argc, char const *argv[]) {
+    //Declaring variables
     int MSG_SIZE = 1024;
     int SERVER_PORT = 50000;
     string server_IP="";
@@ -48,21 +49,24 @@ int main(int argc, char const *argv[]) {
     const char *inpipe = "inpipe";
     const char *outpipe = "outpipe";
 
+    //reading the command line arguments
     if (argc == 3){
         SERVER_PORT = atoi(argv[1]);
         server_IP=argv[2];
     }
     else{
+        // send an error message and display the running instructions
         cout << "Enter port number and server IP address: \n";
         return 0;
     }
 
+    // calling create_and_openfifo() to open inpipe and outpipe with read only 
+    // and write only modes respectively. 
+    // these pipes will be used to read from and write to the plotter program 
     int in = create_and_open_fifo(inpipe, O_RDONLY);
     cout << "inpipe opened..." << endl;
     int out = create_and_open_fifo(outpipe, O_WRONLY);
     cout << "outpipe opened..." << endl;
-
-    // Your code starts here
 
 
 
@@ -75,9 +79,17 @@ int main(int argc, char const *argv[]) {
     // Declare socket descriptor
     int socket_desc;
 
-   // char outbound[BUFFER_SIZE] = {};
-   // char inbound[BUFFER_SIZE] = {};
 
+    // creating a socket to communicate with the server
+    /*
+        socket() input arguments are:
+        socket domain (AF_INET):    IPv4 Internet protocols
+        socket type (SOCK_STREAM):  sequenced, reliable, two-way, connection-based
+                                    byte streams
+        socket protocol (0):        OS selects a protocol that supports the requested
+                                    socket type (in this case: IPPROTO_TCP)
+        socket() returns a socket descriptor
+    */
     socket_desc = socket(AF_INET, SOCK_STREAM, 0);
     if (socket_desc == -1) {
         cerr << "Listening socket creation failed!\n";
@@ -87,12 +99,16 @@ int main(int argc, char const *argv[]) {
     cout << "socket created\n";
 
     // Prepare sockaddr_in structure variable
-    peer_addr.sin_family = AF_INET;                         // address family (2 bytes)
-    peer_addr.sin_port = htons(SERVER_PORT);                // port in network byte order (2 bytes)
-                                                            // htons takes care of host-order to short network-order conversion.
+    // address family (2 bytes)
+    peer_addr.sin_family = AF_INET;   
+    // port in network byte order (2 bytes)
+    // htons takes care of host-order to short network-order conversion.                      
+    peer_addr.sin_port = htons(SERVER_PORT);               
+                                                            
+    // internet address (4 bytes). INADDR_LOOPBACK is localhost address
+    peer_addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);     
 
-    peer_addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);     // internet address (4 bytes). INADDR_LOOPBACK is localhost address
-
+    // connecting to the server socket
     if (connect(socket_desc, (struct sockaddr *) &peer_addr, sizeof peer_addr) == -1) {
         std::cerr << "Cannot connect to the host!\n";
         close(socket_desc);
@@ -101,26 +117,37 @@ int main(int argc, char const *argv[]) {
 
     cout << "Connected to the socket\n";
 
+    // initializing the struct timer to initialize the timeout interval
     struct timeval timer = {.tv_sec = 1};
 
+    // calling setsockopt() to set the receiving timeout interval
     if (setsockopt(socket_desc, SOL_SOCKET, SO_RCVTIMEO, (void *) &timer, sizeof(timer)) == -1) {
         std::cerr << "Cannot set socket options!\n";
         close(socket_desc);
         return 1;
       }
 
-    // char line[MSG_SIZE] = {};
+    // declaring timeout to be false initially
     bool timeout=false;
+
+    // a string to store the route request sent by the plotter
     string route_req="";
 
     while(true){
+        // this while loop runs until the plotter program exits, i.e there are no more route 
+        // requests to be catered for.
+
+        // A vector of type string to store all the Waypoints along the path
         vector<string> A_Waypoints;
+
         char line[MSG_SIZE] = {};
         bool flag= false;
-        //2. Read coordinates of start and end points from inpipe (blocks until they are selected)
-        //char line[MSG_SIZE] = {};
+
+
+        // Declaring variables
+        
         char msg_rec[MSG_SIZE]={};
-        //char Out_buff[MSG_SIZE]={};
+        
         int bytes_written;
         int bytes_read;
         string Ack = "A";
@@ -129,32 +156,36 @@ int main(int argc, char const *argv[]) {
         
 
         if(!timeout)
-        {
+        {  // This if loop runs when there is no timeout and new coordinates are to be 
+           // read from the plotter and transferred to the server
+
+            //building the string route_req
             route_req="";
             route_req+="R";
 
+            //reading the coordinates of the first point from the plotter
             bytes_read = read(in, line, MSG_SIZE);
 
-            for (auto _: line){
+            /*for (auto _: line){
                 cout << _;
-            }
-            cout << endl;
+            }*/
+            //cout << endl;
 
-            // if (strcmp("Q", line) == 0) {
+            
+            // checking for 'Q' message
             if (line[0] == 'Q'){
-                cout << "Quit checkpoint\n";
+                // if a 'Q' message is received, the client and server must exit.
+                //cout << "Quit checkpoint\n";
                 send(socket_desc, line, strlen(line) + 1, 0);
-                // send(socket_desc, "Q", strlen("Q") + 1, 0);
-                cout << "After sending Q message to server\n";
+                //cout << "After sending Q message to server\n";
                 break;
             }
 
-            // char * coord[2];
             string coord[2] = {};
             num = 0;
             for (auto ch : line) {
+                // for loop to read and strore the coordinates
                 if (ch == ' ') {
-                // cout << "Check " << coord[num] << endl;
                   ++num;
                 }
                 else {
@@ -162,7 +193,7 @@ int main(int argc, char const *argv[]) {
                 }
             }
 
-            cout << "Checkpoint1\n";
+            //cout << "Checkpoint1\n";
 
             char coord1[coord[0].length()];
             for (int i = 0; i < coord[0].length(); i++){
@@ -174,40 +205,38 @@ int main(int argc, char const *argv[]) {
                 coord2[i] = coord[1][i];
             }
 
-            // route_req+=" "+to_string(atof(coord[0])*100000);
-            // route_req+=" "+to_string(atof(coord[1])*100000);
-
+            // converting coordinates to long long
             long long temp1 = static_cast<long long>(atof(coord1)*100000);
             long long temp2 = static_cast<long long>(atof(coord2)*100000);
 
-
+            // converting coordinates to string and appending them to the route request
             route_req+=" "+to_string(temp1);
             route_req+=" "+to_string(temp2);
-
-
-            cout << "Checkpoint3 " << route_req << endl;
-
             num=0;
 
             string s_coord[2];
 
+            //reading the coordinates of the end point
             bytes_read = read(in, line, MSG_SIZE);
 
-            for (auto _: line){
+            /*for (auto _: line){
                 cout << _;
-            }
-            cout << endl;
+            }*/
+            //cout << endl;
 
 
-            // if (strcmp("Q", line) == 0) {
+            // checking for 'Q' message
             if (line[0] == 'Q'){
+                // if a 'Q' message is received, the client and server must exit.
+                
                 send(socket_desc, line, strlen(line) + 1, 0);
-                cout << "Quit checkpoint\n";
-                // send(socket_desc, "Q", strlen("Q") + 1, 0);
-                cout << "Sended Q message to server\n";
+                //cout << "Quit checkpoint\n";
+                
+                //cout << "Sended Q message to server\n";
                 break;
             }
             for (auto ch : line) {
+                // for loop to read and strore the coordinates
                 if (ch == ' ') {
                     ++num;
                 }
@@ -216,7 +245,7 @@ int main(int argc, char const *argv[]) {
                 }
             }
 
-            cout << "Checkpoint2\n";
+            //cout << "Checkpoint2\n";
 
             char coord3[s_coord[0].length()];
             for (int i = 0; i < s_coord[0].length(); i++){
@@ -228,45 +257,44 @@ int main(int argc, char const *argv[]) {
                 coord4[i] = s_coord[1][i];
             }
 
-
+            // converting coordinates to long long
             long long temp3 = static_cast<long long>(atof(coord3)*100000);
             long long temp4 = static_cast<long long>(atof(coord4)*100000);
 
+            // converting coordinates to string and appending them to the route request
             route_req+=" "+to_string(temp3);
             route_req+=" "+to_string(temp4);
-            cout << route_req << endl;
+            
         }
         
-
-        // route_req+=" "+to_string(atof(coord[0])*100000);
-        // route_req+=" "+to_string(atof(coord[1])*100000);
-
-        cout << "Received coordinates\n";
-       // cout << route_req << endl;
-
-        // 3. Write to the socket
+        // send route request to the socket
         send(socket_desc, route_req.c_str(), route_req.length() + 1, 0);
 
-        cout << "After sending route request\n";
-
+        
+        // receiving the message with the number of coordinates from the server 
         int rec_size = recv(socket_desc, msg_rec, MSG_SIZE, 0);
         if (rec_size == -1) {
-            cout << "Timeout occurred... state reset!\n";
+            //cout << "Timeout occurred... state reset!\n";
             timeout=true;
             continue;
         }
 
         num=0;
         string N_msg[2];
-        cout << "Got N number message\n";
+        //cout << "Got N number message\n";
         if(msg_rec[0] == 'N'){
+            // checking if the message is valid
             if(msg_rec[0] == 'N' && msg_rec[2] == '0'){
+                // in case there is no path between the selected coordinates
                 timeout = false;
                 continue;
             }
+
+            // sending the Acknowledgement A to the server
             send(socket_desc, Ack.c_str() , Ack.length()+1, 0);
+
             for(auto ch : msg_rec){
-                // (ch == ' ') ? num++ : N_msg[num] += ch;
+                // a for loop to read and store the message received.
                 if(ch == ' ')
                     num++;
                 else
@@ -274,21 +302,27 @@ int main(int argc, char const *argv[]) {
             }
         }
         else{
-            cout << "Received unexpected message!\n";
+            // if an unexpected message is received, reset the state
+            // cout << "Received unexpected message!\n";
             timeout = true;
             continue; 
         }
         
-        cout << Ack << endl;
-
+        
+        // converting the number of waypoints to an integer
         int iter=stoi(N_msg[1]);
-        cout << iter << endl;
+
         for(int i=0; i<iter ; i++)
         {
-            // string msg[3];
+            // a for loop to receive all the waypoints from the server 
+            // and send them to the plotter
+
             rec_size = recv(socket_desc, msg_rec, MSG_SIZE, 0);
             if (rec_size == -1) {
-                cout << "Timeout occurred... state reset!\n";
+                // if a timeout occurs.
+                //cout << "Timeout occurred... state reset!\n";
+
+                //updating the flags
                 timeout=true;
                 flag=true;
                 break;
@@ -296,24 +330,19 @@ int main(int argc, char const *argv[]) {
 
             num=0;
             if(msg_rec[0] == 'W'){
-                // Waypoint.push_back(msg_rec);
+                // checking if the correct message is received.
                 string temp_s = "";
                 for (auto ch: msg_rec){
                     temp_s += ch;
                 }
+                // storing the waypoints in the vector
                 A_Waypoints.push_back(temp_s);
-                // for(auto ch : msg_rec){
-                //     // (ch == ' ') ? num++ : N_msg[num] += ch; 
-                //     if(ch == ' '){
-                //         num++;
-                //     }
-                //     else{
-                //         msg[num] += ch;
-                //     }
-                // }
             }
             else{
-                cout << "Received unexpected message!\n";
+                // if an unexpected message is received
+                //cout << "Received unexpected message!\n";
+
+                //updating the flags
                 flag=true;
                 timeout = true;
                 break; 
@@ -336,20 +365,23 @@ int main(int argc, char const *argv[]) {
                 
             // bytes_written = write(out, Out_buff , sizeof Out_buff);
 
-            cout << "Waypoint to plotter " << Ack << endl;
+            //cout << "Waypoint to plotter " << Ack << endl;
 
-            
+            // sending the Acknowledgement 'A' to the plotter
             send(socket_desc, Ack.c_str() , Ack.length()+1, 0);
         }
 
         if(flag){
+            // if flag is true, continue to the next iteration
             timeout = true;
             continue;
         }
-            
+        
+        // receiving the 'E' message from the server
         rec_size = recv(socket_desc, msg_rec, MSG_SIZE, 0);
         if (rec_size == -1) {
-            cout << "Timeout occurred... state reset!\n";
+            //cout << "Timeout occurred... state reset!\n";
+            // updating the timeout flag
             timeout=true;
             continue;
         }
@@ -358,13 +390,15 @@ int main(int argc, char const *argv[]) {
         char E= 'E' ;
 
         if (msg_rec[0] != E){
-            cout << "Received unexpected message!\n";
+            //if an unexpected message is received, update the flag
+            //cout << "Received unexpected message!\n";
             timeout = true;
             continue;
           }
         else{
             num = 0;
             for (auto it: A_Waypoints){
+                // build and send coordinates of the waypoints to the plotter
                 string Newmsg[3];
                 num = 0;
                 for(auto ch : it){
@@ -378,8 +412,7 @@ int main(int argc, char const *argv[]) {
                 }
 
                 string Waypoint="";
-                // cout << Newmsg[0] << " " << Newmsg[1] << " " << Newmsg[2] << " waypoints\n";
-                // cout << "Checkpoint after getting waypoints\n";
+                
                 Waypoint+=to_string( stod(Newmsg[1]) / 100000 ) + " " + to_string( stod(Newmsg[2]) / 100000);
 
                 char Out_buff[Waypoint.length()+1]={};
@@ -389,33 +422,31 @@ int main(int argc, char const *argv[]) {
                 {
                     Out_buff[j]=Waypoint[j];
                 }
+
+                // adding the newline character at the end of each waypoint
                 Out_buff[j]='\n';
-                
+                    
+                // writing the waypoints to the plotter
                 bytes_written = write(out, Out_buff , sizeof Out_buff);
             }
 
+
+            // sending the 'E' message to the plotter
             char out_msg[2]={};
             out_msg[0]=msg_rec[0];
             out_msg[1]='\n';
             bytes_written = write(out, out_msg , sizeof out_msg);
+
+            //reset the timeout flag to receive new coordinates
             timeout = false;
         }
     }
 
 
-    // Here is what you need to do:
-    // 1. Establish a connection with the server
-    // 2. Read coordinates of start and end points from inpipe (blocks until they are selected)
-    //    If 'Q' is read instead of the coordinates then go to Step 7
-    // 3. Write to the socket
-    // 4. Read coordinates of waypoints one at a time (blocks until server writes them)
-    // 5. Write these coordinates to outpipe
-    // 6. Go to Step 2
-    // 7. Close the socket and pipes
-
-
-    // Your code ends here
+    // close the socket connection with the server
     close(socket_desc);
+
+    // close and unlink the inpipe and outpipe
     close(in);
     close(out);
     unlink(inpipe);
