@@ -37,7 +37,7 @@ int create_and_open_fifo(const char * pname, int mode) {
         exit(-1);
     }
 
-    return fd;
+    return fd; 
 }
 
 int main(int argc, char const *argv[]) {
@@ -109,12 +109,13 @@ int main(int argc, char const *argv[]) {
         return 1;
       }
 
-    char line[MSG_SIZE] = {};
+    // char line[MSG_SIZE] = {};
     bool timeout=false;
     string route_req="";
 
     while(true){
         vector<string> A_Waypoints;
+        char line[MSG_SIZE] = {};
         bool flag= false;
         //2. Read coordinates of start and end points from inpipe (blocks until they are selected)
         //char line[MSG_SIZE] = {};
@@ -139,11 +140,12 @@ int main(int argc, char const *argv[]) {
             }
             cout << endl;
 
-            if (strcmp("Q", line) == 0) {
+            // if (strcmp("Q", line) == 0) {
+            if (line[0] == 'Q'){
                 cout << "Quit checkpoint\n";
                 send(socket_desc, line, strlen(line) + 1, 0);
                 // send(socket_desc, "Q", strlen("Q") + 1, 0);
-                cout << "Send Q message to server\n";
+                cout << "After sending Q message to server\n";
                 break;
             }
 
@@ -197,7 +199,8 @@ int main(int argc, char const *argv[]) {
             cout << endl;
 
 
-            if (strcmp("Q", line) == 0) {
+            // if (strcmp("Q", line) == 0) {
+            if (line[0] == 'Q'){
                 send(socket_desc, line, strlen(line) + 1, 0);
                 cout << "Quit checkpoint\n";
                 // send(socket_desc, "Q", strlen("Q") + 1, 0);

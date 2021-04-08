@@ -96,7 +96,7 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-  // To store the server and client socket and sincer we are using IPV4
+  // To store the server and client socket and since we are using IPV4
   struct sockaddr_in my_addr, peer_addr;
 
   memset(&my_addr, '\0', sizeof my_addr);
@@ -105,7 +105,6 @@ int main(int argc, char* argv[]) {
 
   // To recieve the data form client socket
   // char buffer[BUFFER_SIZE] = {};
-
   lstn_socket_desc = socket(AF_INET, SOCK_STREAM, 0);
   if (lstn_socket_desc == -1){
     std::cerr << "Listening socket creation failed!\n";
@@ -168,7 +167,8 @@ int main(int argc, char* argv[]) {
     sPoint.lat = 0; sPoint.lon = 0; ePoint.lat = 0; ePoint.lat = 0;
     
 
-    if (strcmp("Q", buffer) == 0) {
+    // if (strcmp("Q", buffer) == 0) {
+    if (buffer[0] == 'Q'){
       std::cout << "Connection will be closed\n";
       // Need to check since we need to close connection
       // I am thinking to closing the file destrctor would make more sense
@@ -265,6 +265,7 @@ int main(int argc, char* argv[]) {
           }
           // Sending the waypoints
           for (auto v : path) {
+            buffer[BUFFER_SIZE] = {};
 
             std::string Way_point = "W ";
             Way_point += std::to_string(points[v].lat);
@@ -274,6 +275,7 @@ int main(int argc, char* argv[]) {
             send(conn_socket_desc, Way_point.c_str(), Way_point.length() + 1, 0);
             rec_size = recv(conn_socket_desc, buffer, BUFFER_SIZE, 0);
 
+            // std::cout << "Checkpoint for Ack: " << buffer << "\n";
             if (rec_size == -1) {
 
               std::cout << "Timeout occurred.. still waiting!2\n";
