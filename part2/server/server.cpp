@@ -46,12 +46,14 @@ int findClosest(const Point& pt, const unordered_map<int, Point>& points) {
 }
 
 // reads graph description from the input file and builts a graph instance
-void readGraph(const string& filename, WDigraph& g, unordered_map<int, Point>& points) {
+void readGraph(const string& filename, WDigraph& g,
+ unordered_map<int, Point>& points) {
   ifstream fin(filename);
   string line;
 
   while (getline(fin, line)) {
-    // split the string around the commas, there will be 4 substrings either way
+    // split the string around the commas, there will be 4 substrings
+    // either way
     string p[4];
     int at = 0;
     for (auto c : line) {
@@ -73,7 +75,8 @@ void readGraph(const string& filename, WDigraph& g, unordered_map<int, Point>& p
     if (p[0] == "V") {
       // adding a new vertex
       int id = stoi(p[1]);
-      assert(id == stoll(p[1])); // sanity check: asserts if some id is not 32-bit
+      assert(id == stoll(p[1])); // sanity check: asserts if some id is
+      // not 32-bit
       points[id].lat = static_cast<long long>(stod(p[2])*100000);
       points[id].lon = static_cast<long long>(stod(p[3])*100000);
       g.addVertex(id);
@@ -145,7 +148,8 @@ int main(int argc, char* argv[]) {
 
   // note bind takes in a protocol independent address structure
   // hence we need to cast sockaddr_in* to sockaddr*
-  if (bind(lstn_socket_desc, (struct sockaddr *) &my_addr, sizeof my_addr) == -1){
+  if (bind(lstn_socket_desc, (struct sockaddr *) &my_addr,
+  sizeof my_addr) == -1){
     std::cerr << "Binding failed!\n";
     close(lstn_socket_desc);
     return 1;
@@ -160,9 +164,12 @@ int main(int argc, char* argv[]) {
   
   socklen_t peer_addr_size = sizeof my_addr;
 
-  // Extract the first connection request from the queue of pending connection requests
-  // Return a new connection socket descriptor which is not in the listening state
-  conn_socket_desc = accept(lstn_socket_desc, (struct sockaddr *) &peer_addr, &peer_addr_size);
+  // Extract the first connection request from the queue of
+  // pending connection requests
+  // Return a new connection socket descriptor which is not in
+  // the listening state
+  conn_socket_desc = accept(lstn_socket_desc,
+  (struct sockaddr *) &peer_addr, &peer_addr_size);
   if (conn_socket_desc == -1){
     std::cerr << "Connection socket creation failed!\n";
     // close(lstn_socket_desc);///
@@ -170,7 +177,8 @@ int main(int argc, char* argv[]) {
     // Need to check if we need to close the socket descriptor
     return 1;
   }
-  std::cout << "Connection request accepted from " << inet_ntoa(peer_addr.sin_addr);
+  std::cout << "Connection request accepted from ";
+  std::cout << inet_ntoa(peer_addr.sin_addr);
   std::cout << ":" << ntohs(peer_addr.sin_port) << "\n";
 
   // Declare structure variable that represents an elapsed time 
@@ -178,15 +186,19 @@ int main(int argc, char* argv[]) {
   struct timeval timer = {.tv_sec = 1, .tv_usec = 10000};
 
   /*   setsockopt sets a socket option
-    it takes a socket descriptor, an integer that represents the level at which the option resides,
-    an integer that can be mapped to the option name, a buffer pointed to by a const void * that 
+    it takes a socket descriptor, an integer that represents the level at
+    which the option resides, an integer that can be mapped to the option
+    name, a buffer pointed to by a const void * that 
     contains the option value, and an integer for the size of that buffer
 
     to manipulate socket API options, use SOL_SOCKET for the level
-    SO_RCVTIMEO and SO_SNDTIMEO are option names for receiving and sending timeouts respectively
-    send and recv functions return -1 if timeout occurs
+    SO_RCVTIMEO and SO_SNDTIMEO are option names for receiving and sending
+    timeouts respectively send and recv functions return -1
+    if timeout occurs
   */
-  if (setsockopt(conn_socket_desc, SOL_SOCKET, SO_RCVTIMEO, (void *) &timer, sizeof(timer)) == -1) {
+  if (setsockopt(conn_socket_desc, SOL_SOCKET,
+  SO_RCVTIMEO, (void *) &timer, sizeof(timer)) == -1) {
+
     std::cerr << "Cannot set socket options!\n";
     close(lstn_socket_desc);
     return 1;
@@ -212,7 +224,7 @@ int main(int argc, char* argv[]) {
     // Q message is recieved from client connection will be closed and exits
     if (buffer[0] == 'Q'){
 
-      std::cout << "Connection will be closed\n";
+      // std::cout << "Connection will be closed\n";
       close(lstn_socket_desc);
       return 0;
     }
@@ -234,11 +246,13 @@ int main(int argc, char* argv[]) {
           coords[at] += c;
         }
       }
-      
+
       std::string::size_type sz = 0;   // alias of size_t
 
-      sPoint.lat = stoll(coords[1], &sz, 0); sPoint.lon = stoll(coords[2], &sz, 0);
-      ePoint.lat = stoll(coords[3], &sz, 0); ePoint.lon = stoll(coords[4], &sz, 0);
+      sPoint.lat = stoll(coords[1], &sz, 0);
+      sPoint.lon = stoll(coords[2], &sz, 0);
+      ePoint.lat = stoll(coords[3], &sz, 0);
+      ePoint.lon = stoll(coords[4], &sz, 0);
 
       // get the points closest to the two points we read
       start = findClosest(sPoint, points); end = findClosest(ePoint, points);
@@ -248,7 +262,7 @@ int main(int argc, char* argv[]) {
       if (tree.find(end) == tree.end()) {
             std::string str = "N 0";
             send(conn_socket_desc, str.c_str(), str.length() + 1, 0);
-            std::cout << "No path\n";
+            // std::cout << "No path\n";
             // Since it's no path continue to accept new route request
             goto Recv_new_request;
         }
@@ -268,21 +282,22 @@ int main(int argc, char* argv[]) {
           send(conn_socket_desc, str.c_str(), str.length() + 1, 0);
           rec_size = recv(conn_socket_desc, buffer, BUFFER_SIZE, 0);
           if (rec_size == -1){
-            std::cout << "Timeout occurred.. still waiting!\n";
+            // std::cout << "Timeout occurred.. still waiting!\n";
             // Since it's a timeout continue to recieve new route request
             continue;
           }
 
-          // Q message is recieved from client connection will be closed and exits
+          // Q message is recieved from client connection will
+          // be closed and exits
           if (buffer[0] == 'Q'){
-            std::cout << "Connection will be closed\n";
+            // std::cout << "Connection will be closed\n";
             close(lstn_socket_desc);
             return 0;
           }
 
           char A = 'A';
           if (buffer[0] != A){
-            std::cout << "Received unexpected message!\n";
+            // std::cout << "Received unexpected message!\n";
             // Continuew to recieve new route request from client
             continue;
           }
@@ -295,27 +310,30 @@ int main(int argc, char* argv[]) {
             Way_point += " ";
             Way_point += std::to_string(points[v].lon);
 
-            send(conn_socket_desc, Way_point.c_str(), Way_point.length() + 1, 0);
+            send(conn_socket_desc, Way_point.c_str(),
+            Way_point.length() + 1, 0);
+
             rec_size = recv(conn_socket_desc, buffer, BUFFER_SIZE, 0);
 
             if (rec_size == -1) {
               
-              std::cout << "Timeout occurred.. still waiting!\n";
+              // std::cout << "Timeout occurred.. still waiting!\n";
               // Since it's a timeout continue to recieve new route request
               goto Recv_new_request;
 
             }
 
-            // Q message is recieved from client connection will be closed and exits
+            // Q message is recieved from client connection will be
+            // closed and exits
             if (buffer[0] == 'Q'){
-              std::cout << "Connection will be closed\n";
+              // std::cout << "Connection will be closed\n";
               close(lstn_socket_desc);
               return 0;
 
             }
 
             if (buffer[0] != A){
-              std::cout << "Received unexpected message!\n";
+              // std::cout << "Received unexpected message!\n";
               // Continuew to recieve new route request from client
               goto Recv_new_request;
             }

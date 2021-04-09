@@ -62,6 +62,15 @@ Notes and assumptions:
   error 'mkfifo() failed' in the next run.  In that case, delete inpipe and outpipe before running
   the code again.
 
+• Assuming that no two same coordinate will be seleted as start and end coordinates
+
+• Assuming that server need not wait for acknowledgement after sending no path message to
+client and waits for new route request from client
+
+• Assuming in case of a package drop complete character array would be lost that is being send from client since it's a small message <64KB
+
+• Assuming that Q quit message form client can be received any time in the program
+
 ----------------------------------SERVER-----------------------------------------------------
 
 DESCRIPTION:

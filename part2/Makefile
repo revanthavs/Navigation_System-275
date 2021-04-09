@@ -18,9 +18,12 @@ OBJS= server/digraph.o server/server.o server/dijkstra.o server/server client/cl
 # executable targets
 all: server client
 
+# Links the objects files of digraph, server, and dijkstra and
+# creates an executable called server
 server: digraph.o server.o dijkstra.o 
 	$(CC) server/digraph.o server/server.o server/dijkstra.o -o server/server
 
+# Creates an executable called client
 client: client.o
 	$(CC) client/client.o -o client/client
 
@@ -38,4 +41,4 @@ client.o: client/client.cpp
 	$(CC) client/client.cpp -o client/client.o $(CFLAGS)
 
 clean:
-	rm -r -f $(OBJS) 
+	rm -r -f $(OBJS) inpipe outpipe 

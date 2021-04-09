@@ -8,8 +8,6 @@ Assignment #1  Trivial Nagivation System
 */
 
 
-
-
 #include <iostream>
 #include <unistd.h>
 #include <sys/types.h>
@@ -19,12 +17,11 @@ Assignment #1  Trivial Nagivation System
 #include <sys/socket.h>     // socket, bind, listen, accept
 #include <sys/time.h>       // timeval
 #include <arpa/inet.h>      // inet_ntoa, htonl, htons, ntohl, ntohs
-#include <netdb.h>          // getaddrinfo, freeaddrinfo, INADDR_ANY (superset of netinet/in.h)
+#include <netdb.h>          // getaddrinfo, freeaddrinfo, INADDR_ANY
 #include <cstdlib>          // atoi
 #include <cstring>          // strlen, strcmp
 #include <string>       
-#include <vector> // Need to remove this
-// Add more libraries, macros, functions, and global variables if needed
+#include <vector>
 
 using namespace std;
 
@@ -34,7 +31,8 @@ int create_and_open_fifo(const char * pname, int mode) {
     // both proecsses must open the fifo before they can perform
     // read and write operations on it
     if (mkfifo(pname, 0666) == -1) {
-        cout << "Unable to make a fifo. Ensure that this pipe does not exist already!" << endl;
+        cout << "Unable to make a fifo. Ensure that this pipe does not";
+        cout << "exist already!" << endl;
         exit(-1);
     }
 
@@ -54,11 +52,12 @@ int create_and_open_fifo(const char * pname, int mode) {
 
 int main(int argc, char const *argv[]) {
     /* 
-    This is the main function of client program. The client program establishes 
-    a two way communication channel with the plotter and the server. It uses pipes
-    to communicate with the plotter program and sockets to communicate with the 
-    server program. It reads the coordinates from the plotter, and sends them to 
-    the route finding server. It then receives the waypoints from the server and 
+    This is the main function of client program. The client program
+    establishes a two way communication channel with the plotter and
+    the server. It uses pipes to communicate with the plotter program
+    and sockets to communicate with the server program. It reads the
+    coordinates from the plotter, and sends them to the route finding 
+    server. It then receives the waypoints from the server and
     sends to the plotter.
     */
 
@@ -82,9 +81,9 @@ int main(int argc, char const *argv[]) {
         return 0;
     }
 
-    // calling create_and_openfifo() to open inpipe and outpipe with read only 
+    // calling create_and_openfifo() to open inpipe and outpipe with read only
     // and write only modes respectively. 
-    // these pipes will be used to read from and write to the plotter program 
+    // these pipes will be used to read from and write to the plotter program
     int in = create_and_open_fifo(inpipe, O_RDONLY);
     cout << "inpipe opened..." << endl;
     int out = create_and_open_fifo(outpipe, O_WRONLY);
@@ -106,10 +105,11 @@ int main(int argc, char const *argv[]) {
     /*
         socket() input arguments are:
         socket domain (AF_INET):    IPv4 Internet protocols
-        socket type (SOCK_STREAM):  sequenced, reliable, two-way, connection-based
-                                    byte streams
-        socket protocol (0):        OS selects a protocol that supports the requested
-                                    socket type (in this case: IPPROTO_TCP)
+        socket type (SOCK_STREAM):  sequenced, reliable, two-way,
+                                    connection-based byte streams
+        socket protocol (0):        OS selects a protocol that supports
+                                    the requested socket type
+                                    (in this case: IPPROTO_TCP)
         socket() returns a socket descriptor
     */
     socket_desc = socket(AF_INET, SOCK_STREAM, 0);
@@ -131,7 +131,8 @@ int main(int argc, char const *argv[]) {
     peer_addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);     
 
     // connecting to the server socket
-    if (connect(socket_desc, (struct sockaddr *) &peer_addr, sizeof peer_addr) == -1) {
+    if (connect(socket_desc, (struct sockaddr *) &peer_addr,
+    sizeof peer_addr) == -1) {
         std::cerr << "Cannot connect to the host!\n";
         close(socket_desc);
         return 1;
@@ -143,7 +144,8 @@ int main(int argc, char const *argv[]) {
     struct timeval timer = {.tv_sec = 1};
 
     // calling setsockopt() to set the receiving timeout interval
-    if (setsockopt(socket_desc, SOL_SOCKET, SO_RCVTIMEO, (void *) &timer, sizeof(timer)) == -1) {
+    if (setsockopt(socket_desc, SOL_SOCKET, SO_RCVTIMEO, (void *) &timer,
+    sizeof(timer)) == -1) {
         std::cerr << "Cannot set socket options!\n";
         close(socket_desc);
         return 1;
@@ -156,8 +158,8 @@ int main(int argc, char const *argv[]) {
     string route_req="";
 
     while(true){
-        // this while loop runs until the plotter program exits, i.e there are no more route 
-        // requests to be catered for.
+        // this while loop runs until the plotter program exits,
+        // i.e there are no more route requests to be catered for.
 
         // A vector of type string to store all the Waypoints along the path
         vector<string> A_Waypoints;
@@ -170,8 +172,11 @@ int main(int argc, char const *argv[]) {
         
         char msg_rec[MSG_SIZE]={};
         
-        int bytes_written;
-        int bytes_read;
+        int bytes_written = 0;
+        int bytes_read = 0;
+        if (false){
+            cout << bytes_written << " " << bytes_read << endl;
+        }
         //bytes_written=0;
         //bytes_read=0;
         string Ack = "A";
@@ -180,8 +185,8 @@ int main(int argc, char const *argv[]) {
         
 
         if(!timeout)
-        {  // This if loop runs when there is no timeout and new coordinates are to be 
-           // read from the plotter and transferred to the server
+        {  // This if loop runs when there is no timeout and new coordinates
+           // are to be read from the plotter and transferred to the server
 
             //building the string route_req
             route_req="";
@@ -193,7 +198,8 @@ int main(int argc, char const *argv[]) {
         
             // checking for 'Q' message
             if (line[0] == 'Q'){
-                // if a 'Q' message is received, the client and server must exit.
+                // if a 'Q' message is received, the client and server
+                // must exit.
         
                 send(socket_desc, line, strlen(line) + 1, 0);
 
@@ -212,22 +218,12 @@ int main(int argc, char const *argv[]) {
                 }
             }
 
-        
-            char coord1[coord[0].length()];
-            for (unsigned int i = 0; i < coord[0].length(); i++){
-                coord1[i] = coord[0][i];
-            }
+            long long temp1 = static_cast<long long>(stod(coord[0])*100000);
+            long long temp2 = static_cast<long long>(stod(coord[1])*100000);
 
-            char coord2[coord[1].length()];
-            for (unsigned int i = 0; i < coord[1].length(); i++){
-                coord2[i] = coord[1][i];
-            }
+            // converting coordinates to string and appending them to the
+            // route request
 
-            // converting coordinates to long long
-            long long temp1 = static_cast<long long>(atof(coord1)*100000);
-            long long temp2 = static_cast<long long>(atof(coord2)*100000);
-
-            // converting coordinates to string and appending them to the route request
             route_req+=" "+to_string(temp1);
             route_req+=" "+to_string(temp2);
             num=0;
@@ -239,7 +235,8 @@ int main(int argc, char const *argv[]) {
 
             // checking for 'Q' message
             if (line[0] == 'Q'){
-                // if a 'Q' message is received, the client and server must exit.
+                // if a 'Q' message is received, the client and server
+                // must exit.
                 
                 send(socket_desc, line, strlen(line) + 1, 0);
                 break;
@@ -254,21 +251,11 @@ int main(int argc, char const *argv[]) {
                 }
             }
 
-            char coord3[s_coord[0].length()];
-            for (unsigned int i = 0; i < s_coord[0].length(); i++){
-                coord3[i] = s_coord[0][i];
-            }
+            long long temp3 = static_cast<long long>(stod(s_coord[0])*100000);
+            long long temp4 = static_cast<long long>(stod(s_coord[1])*100000);
 
-            char coord4[s_coord[1].length()];
-            for (unsigned int i = 0; i < coord[1].length(); i++){
-                coord4[i] = s_coord[1][i];
-            }
-
-            // converting coordinates to long long
-            long long temp3 = static_cast<long long>(atof(coord3)*100000);
-            long long temp4 = static_cast<long long>(atof(coord4)*100000);
-
-            // converting coordinates to string and appending them to the route request
+            // converting coordinates to string and appending them to the
+            // route request
             route_req+=" "+to_string(temp3);
             route_req+=" "+to_string(temp4);
             
@@ -278,7 +265,8 @@ int main(int argc, char const *argv[]) {
         send(socket_desc, route_req.c_str(), route_req.length() + 1, 0);
 
         
-        // receiving the message with the number of coordinates from the server 
+        // receiving the message with the number of coordinates from
+        // the server
         int rec_size = recv(socket_desc, msg_rec, MSG_SIZE, 0);
         if (rec_size == -1) {
             //cout << "Timeout occurred... state reset!\n";
@@ -414,7 +402,8 @@ int main(int argc, char const *argv[]) {
 
                 string Waypoint="";
                 
-                Waypoint+=to_string( stod(Newmsg[1]) / 100000 ) + " " + to_string( stod(Newmsg[2]) / 100000);
+                Waypoint+= to_string( stod(Newmsg[1]) / 100000 );
+                Waypoint +=" " + to_string( stod(Newmsg[2]) / 100000);
 
                 char Out_buff[Waypoint.length()+1]={};
 
