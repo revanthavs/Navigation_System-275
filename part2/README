@@ -47,30 +47,6 @@ Sample Commands are:
 ./client 9999 127.0.0.1
 ./plotter
 
-
-Notes and assumptions:
-
-• The plotter and link_emulator programs are built specifically to run on the Virtual Machine 
-  and may not run on other platforms.
-
-• The port numbers to be used must be high number ports that can be used for general purposes, 
-  like Port 8888.  Do not use port numbers less than 1024, such as port 20, 22, and 80; they 
-  are system/reserved ports and can only be used for specific applications, such as SSH, Telnet, 
-  FTP. Typically, port numbers in the range of 5000 to 64000 are safe to use.
-
-• If the client or server terminates unexpectedly, the named pipes will not close and will give an
-  error 'mkfifo() failed' in the next run.  In that case, delete inpipe and outpipe before running
-  the code again.
-
-• Assuming that no two same coordinate will be seleted as start and end coordinates
-
-• Assuming that server need not wait for acknowledgement after sending no path message to
-client and waits for new route request from client
-
-• Assuming in case of a package drop complete character array would be lost that is being send from client since it's a small message <64KB
-
-• Assuming that Q quit message form client can be received any time in the program
-
 ----------------------------------SERVER-----------------------------------------------------
 
 DESCRIPTION:
@@ -93,6 +69,25 @@ Then in the bash terminal, run the command:
 
 Command Line Arguments:
 [port] : the port number of the server
+
+Notes and assumptions:
+
+• The port numbers to be used must be high number ports that can be used for general purposes, 
+  like Port 8888.  Do not use port numbers less than 1024, such as port 20, 22, and 80; they 
+  are system/reserved ports and can only be used for specific applications, such as SSH, Telnet, 
+  FTP. Typically, port numbers in the range of 5000 to 64000 are safe to use.
+
+• If the server terminates unexpectedly, the named pipes will not close and will give an
+  error 'mkfifo() failed' in the next run.  In that case, delete inpipe and outpipe before running
+  the code again.
+
+• Assumes that the coordinates of the start and end points will be different.
+
+• Assumes that quit message 'Q' can be received from the client at any time of the execution.
+
+• Since the messages being exchanged between the client and server are small (<64 KB), if a 
+  package loss occurs, then the entire message will be lost.
+
 
 ----------------------------------CLIENT-----------------------------------------------------
 
@@ -117,3 +112,19 @@ Then in the bash terminal, run the command:
 Command Line Arguments:
 [port] : the port number of the client
 [server IP address] : The IP address of the server
+
+Notes and assumptions:
+
+• The port numbers to be used must be high number ports that can be used for general purposes, 
+  like Port 8888.  Do not use port numbers less than 1024, such as port 20, 22, and 80; they 
+  are system/reserved ports and can only be used for specific applications, such as SSH, Telnet, 
+  FTP. Typically, port numbers in the range of 5000 to 64000 are safe to use.
+
+• If the client terminates unexpectedly, the named pipes will not close and will give an
+  error 'mkfifo() failed' in the next run.  In that case, delete inpipe and outpipe before running
+  the code again.
+
+• Assumes that quit message 'Q' can be received from the plotter at any time of the execution.
+
+• Since the messages being exchanged with the server and with the plotter are small (<64 KB), 
+  if a package loss occurs, then the entire message will be lost.
