@@ -1,0 +1,120 @@
+INCLUDED FILES:-
+
+•client directory
+•server directory
+•README
+•Makefile
+•plotter
+•link_emulator
+
+MAKEFILE TARGETS:-
+
+The following targets are included in the Makefile:
+
+	•all: runs the server and client targets to generate all the executables.  
+	•server: links all object files for the server and builds an executable called server 
+         in the same directory as server.cpp.
+	•server.o: compiles server.cpp and creates the object file.
+	•dijkstra.o: compiles dijkshtra.cpp and creates the object file.
+	•digraph.o: compiles digraph.cpp and creates the object file.
+	•client: links all object files for the client and builds an executable called client 
+		 	 in the same directory as the client.cpp.
+	•client.o: compiles the object.
+	•clean: removes all executable, objects, and named pipes.
+
+RUNNING INSTRUCTIONS:
+Compile the server as well as the client program using the makefile targets and then use 
+separate terminal win-dows/tabs to run the programs in this order:
+
+./server [server_port]
+./link_emulator [server_port] [client_port] [package_drop_rate] [average delay]
+./client [client_port] [server IP address]
+./plotter
+
+Sample Commands are:
+./server 8888
+./link_emulator 8888 9999 0.01 50
+./client 9999 127.0.0.1
+./plotter
+
+----------------------------------SERVER-----------------------------------------------------
+
+DESCRIPTION:
+
+The server uses a socket to communicate with the client. It receives the route request from
+the client, computes the shortest path between the start and end points of the trip, and sends
+back to the client the waypoints along the path. The server program uses a timeout of 1 second 
+anytime it reads from the client. After the timeout or anytime the server reads an unexpected 
+message, it immediately returns to the state where it is waiting for the initial route request 
+without sending any further messages. 
+In the case where there is no path between two points in the Edmonton road network, the server
+simply sends 'N 0' message to the client and returns to the state where it is waiting for a 
+request. It does not wait for an acknowledgement in this case.
+
+
+RUNNING INSTRUCTIONS:
+Use the target 'server' to create the executable.
+Then in the bash terminal, run the command:
+./server [port]
+
+Command Line Arguments:
+[port] : the port number of the server
+
+Notes and assumptions:
+
+• The port numbers to be used must be high number ports that can be used for general purposes, 
+  like Port 8888.  Do not use port numbers less than 1024, such as port 20, 22, and 80; they 
+  are system/reserved ports and can only be used for specific applications, such as SSH, Telnet, 
+  FTP. Typically, port numbers in the range of 5000 to 64000 are safe to use.
+
+• If the server terminates unexpectedly, the named pipes will not close and will give an
+  error 'mkfifo() failed' in the next run.  In that case, delete inpipe and outpipe before running
+  the code again.
+
+• Assumes that the coordinates of the start and end points will be different.
+
+• Assumes that quit message 'Q' can be received from the client at any time of the execution.
+
+• Since the messages being exchanged between the client and server are small (<64 KB), if a 
+  package loss occurs, then the entire message will be lost.
+
+
+----------------------------------CLIENT-----------------------------------------------------
+
+DESCRIPTION:
+
+The client.cpp implements two-way communication with the server with the plotter. It uses pipes
+to communicate with the plotter program and sockets to communicate with the server program. 
+The client communicates with the server to get the route information (i.e., coordinates of the 
+start and end points of a trip) and sends them to the route finding server. It then receives the 
+waypoints from the server and sends them to the plotter.
+
+The client uses the timeout of 1 second when waiting for the reply from the server.
+After the timeout or anytime the client reads an unexpected message, it should restart the 
+request from the beginning (i.e., resend the route request).
+
+
+RUNNING INSTRUCTIONS:
+Use the target 'client' to create the executable.
+Then in the bash terminal, run the command:
+./client [port] [server IP address]
+
+Command Line Arguments:
+[port] : the port number of the client
+[server IP address] : The IP address of the server
+
+Notes and assumptions:
+
+• The port numbers to be used must be high number ports that can be used for general purposes, 
+  like Port 8888.  Do not use port numbers less than 1024, such as port 20, 22, and 80; they 
+  are system/reserved ports and can only be used for specific applications, such as SSH, Telnet, 
+  FTP. Typically, port numbers in the range of 5000 to 64000 are safe to use.
+
+• If the client terminates unexpectedly, the named pipes will not close and will give an
+  error 'mkfifo() failed' in the next run.  In that case, delete inpipe and outpipe before running
+  the code again.
+
+• Assumes that quit message 'Q' can be received from the plotter at any time of the execution.
+
+• Since the messages being exchanged with the server and with the plotter are small (<64 KB), 
+  if a package loss occurs, then the entire message will be lost.
